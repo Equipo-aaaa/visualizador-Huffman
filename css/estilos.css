@@ -1,0 +1,550 @@
+/* =========================================================================
+   Estilos compartidos - VisuAlgoritmos
+   Bootstrap da la estructura (grid, botones, formularios); aquí solo se
+   ajusta la paleta del proyecto y lo que Bootstrap no trae (las barras).
+   Las páginas usan siempre el modo oscuro (data-bs-theme="dark" en <html>).
+   ========================================================================= */
+
+:root {
+  /* Paleta del proyecto */
+  --primario:    #06B6D4;   /* cian    */
+  --secundario:  #6366F1;   /* índigo  */
+  --terciario:   #10B981;   /* verde   */
+  --neutro:      #71717A;   /* gris    */
+
+  /* Fondos y bordes (tonos oscuros del neutro) */
+  --fondo:       #111114;
+  --superficie:  #1A1A1F;
+  --superficie-2:#232329;
+  --borde:       #2E2E35;
+  --texto:       #E4E4E7;
+  --texto-suave: #A1A1AA;
+  --sombra:      rgba(0, 0, 0, .35);
+
+  /* Texto de color: tonos claros que se leen bien sobre el fondo oscuro */
+  --acento-primario:   #22D3EE;
+  --acento-secundario: #818CF8;
+  --texto-comparacion: #FBBF24;
+  --texto-escritura:   #FB7185;
+  --texto-ordenado:    #34D399;
+
+  /* Estados de las barras */
+  --barra-inactiva:    #0891B2;
+  --barra-comparando:  #F59E0B;
+  --barra-escribiendo: #F43F5E;
+  --barra-ordenada:    #10B981;
+
+  /* Bootstrap lee estas variables: así sus componentes usan nuestra paleta */
+  --bs-body-bg: var(--fondo);
+  --bs-body-color: var(--texto);
+  --bs-border-color: var(--borde);
+  --bs-primary: var(--primario);
+  --bs-primary-rgb: 6, 182, 212;
+  --bs-body-font-family: 'Inter', system-ui, sans-serif;
+  --bs-font-monospace: 'JetBrains Mono', monospace;
+}
+
+/* Clases de texto con los colores de la paleta */
+.texto-acento      { color: var(--acento-primario); }
+.texto-secundario  { color: var(--acento-secundario); }
+.texto-comparacion { color: var(--texto-comparacion); }
+.texto-escritura   { color: var(--texto-escritura); }
+.texto-ordenado    { color: var(--texto-ordenado); }
+
+body {
+  min-height: 100vh;
+  --alto-encabezado: 72px;
+}
+
+.mono { font-family: var(--bs-font-monospace); }
+
+/* =========================================================================
+   ESQUELETO (igual en las dos páginas)
+
+   ┌ encabezado ─────────────────────────────┐
+   │ VisuAlgoritmos                       [≡] │  ← [≡] solo en móvil
+   └─────────────────────────────────────────┘
+   ╭ .marco ─────────────────────────────────╮
+   │ .lateral (3/12) │ .contenido (9/12)     │
+   │  · título       │  scroll propio        │
+   │  · navegación   │                       │
+   │  · controles    │                       │
+   │    (scroll)     │                       │
+   ╰─────────────────────────────────────────╯
+   ========================================================================= */
+
+/* ---------- Encabezado ---------- */
+
+.encabezado {
+  height: var(--alto-encabezado);
+  padding: 0 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.encabezado .marca {
+  color: var(--acento-primario);
+  font-weight: 700;
+  font-size: 1.15rem;
+  line-height: 1.1;
+  text-decoration: none;
+}
+
+.encabezado small {
+  font-family: var(--bs-font-monospace);
+  text-transform: uppercase;
+  color: var(--texto-suave);
+  font-weight: 500;
+}
+
+.logo-universidad {
+  height: 48px;       
+  width: auto;         
+  margin-right: .5rem;
+}
+
+@media (max-width: 767.98px) {
+  .logo-universidad { height: 36px; }   /* más chico en móvil */
+}
+
+/* ---------- Tarjeta central ---------- */
+
+.marco {
+  max-width: 1600px;
+  width: calc(100% - 2rem);      /* deja 1rem de aire a cada lado */
+  margin: 0 auto 1rem;
+  height: calc(100vh - var(--alto-encabezado) - 1rem);
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: 40px;
+  box-shadow: 0 18px 40px var(--sombra);
+  overflow: hidden;              /* las esquinas redondeadas recortan a los hijos */
+}
+
+/* Contenido de la derecha: hace scroll sin mover el panel lateral */
+.contenido {
+  height: 100%;
+  overflow-y: auto;
+  padding: 1.5rem;
+}
+
+/* ---------- Panel lateral ----------
+   En escritorio es una columna fija. En móvil Bootstrap lo convierte en
+   menú deslizable (clase offcanvas-md en el HTML), así no se duplica. */
+
+.lateral {
+  background: var(--fondo);
+  border-right: 1px solid var(--borde);
+}
+
+@media (min-width: 768px) {
+  /* Sin esto el panel crece con su contenido y .marco lo recorta: los
+     últimos algoritmos quedarían ocultos. Así el scroll queda adentro. */
+  .lateral { height: 100%; overflow: hidden; }
+}
+
+.lateral-cuerpo {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+  padding: 1rem;
+  min-height: 0;                 /* necesario para que el hijo flex pueda hacer scroll */
+}
+
+.lateral-titulo {
+  text-align: center;
+  font-weight: 700;
+  font-size: 1.05rem;
+  padding-bottom: .75rem;
+  margin: 0;
+  border-bottom: 1px solid var(--borde);
+}
+
+/* Tarjeta de controles: ocupa el espacio que sobra y hace scroll interno */
+/* El contenedor ya no hace scroll: reparte la altura entre los paneles */
+.lateral-controles {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Primer panel (generador): altura natural, nunca se encoge */
+.lateral-controles > .panel:first-child {
+  flex: none;
+}
+
+/* Último panel (algoritmos): ocupa lo que sobra */
+.lateral-controles > .panel:last-child {
+  flex: 1 1 auto;
+  min-height: 0;              /* sin esto, flex no deja que se encoja */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Solo la lista hace scroll, con la barra oculta */
+.lista-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: none;      /* Firefox */
+}
+.lista-scroll::-webkit-scrollbar {
+  display: none;              /* Chrome, Edge, Safari */
+}
+
+@media (max-width: 767.98px) {
+  /* En móvil la página fluye normal, sin alturas fijas */
+  .marco { height: auto; width: calc(100% - 1.5rem); border-radius: 24px; }
+  .contenido { height: auto; padding: 1rem; }
+  .lateral .offcanvas-header { border-bottom: 1px solid var(--borde); }
+}
+
+#chips {
+  max-height: 110px;          /* unas 4 filas de chips */
+  overflow-y: auto;
+  scrollbar-width: none;      /* Firefox */
+}
+
+#chips::-webkit-scrollbar {
+  display: none;              /* Chrome, Edge, Safari */
+}
+/* ---------- Navegación entre páginas (mosaicos) ---------- */
+
+.navegacion {
+  display: flex;
+  gap: .75rem;
+}
+
+.btn-pagina {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: .25rem;
+  padding: .75rem .5rem;
+  border-radius: 18px;
+  border: 2px solid var(--color-pagina);
+  color: var(--color-pagina-texto);
+  background: transparent;
+  font-size: .85rem;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  line-height: 1.15;
+  transition: transform .18s ease, box-shadow .18s ease, background-color .18s ease;
+}
+
+.btn-pagina i { font-size: 1.8rem; line-height: 1; }
+
+.btn-pagina:hover,
+.btn-pagina:focus-visible {
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px var(--sombra);
+  color: var(--color-pagina-texto);
+}
+
+/* Página actual: mosaico relleno */
+.btn-pagina.activo,
+.btn-pagina.activo:hover {
+  background: var(--color-pagina);
+  color: #0B0B0E;
+}
+
+.pagina-visualizador { --color-pagina: var(--primario);   --color-pagina-texto: var(--acento-primario); }
+.pagina-comparador   { --color-pagina: var(--primario); --color-pagina-texto: var(--acento-primario); }
+
+/* ---------- Paneles (tarjetas) ---------- */
+
+.panel {
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: 20px;
+  padding: 1rem;
+}
+
+/* Las tarjetas del panel lateral resaltan un poco sobre su fondo */
+.lateral .panel { background: var(--superficie-2); }
+
+.titulo-pagina { font-size: 1.35rem; font-weight: 700; margin: 0; }
+.subtitulo-pagina { color: var(--texto-suave); font-size: .9rem; margin: .15rem 0 0; }
+
+.titulo-panel {
+  font-family: var(--bs-font-monospace);
+  font-size: .75rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--acento-primario);
+  margin-bottom: .75rem;
+}
+
+/* ---------- Botones con la paleta ---------- */
+
+.btn-primario {
+  --bs-btn-bg: var(--primario);
+  --bs-btn-border-color: var(--primario);
+  --bs-btn-color: #04262D;
+  --bs-btn-hover-bg: #22D3EE;
+  --bs-btn-hover-border-color: #22D3EE;
+  --bs-btn-hover-color: #04262D;
+  --bs-btn-active-bg: #0891B2;
+  --bs-btn-disabled-bg: var(--primario);
+  --bs-btn-disabled-border-color: var(--primario);
+  font-weight: 600;
+}
+
+.btn-terciario {
+  --bs-btn-bg: var(--terciario);
+  --bs-btn-border-color: var(--terciario);
+  --bs-btn-color: #03231A;
+  --bs-btn-hover-bg: #34D399;
+  --bs-btn-hover-border-color: #34D399;
+  --bs-btn-hover-color: #03231A;
+  --bs-btn-disabled-bg: var(--terciario);
+  --bs-btn-disabled-border-color: var(--terciario);
+  font-weight: 600;
+}
+
+.btn-neutro {
+  --bs-btn-bg: var(--superficie-2);
+  --bs-btn-border-color: var(--borde);
+  --bs-btn-color: var(--texto);
+  --bs-btn-hover-bg: var(--borde);
+  --bs-btn-hover-border-color: var(--neutro);
+  --bs-btn-hover-color: var(--texto);
+  --bs-btn-active-bg: var(--secundario);
+  --bs-btn-active-border-color: var(--secundario);
+  --bs-btn-active-color: #fff;
+}
+
+.btn-generar {
+  --bs-btn-bg: transparent;
+  --bs-btn-border-color: var(--primario);
+  --bs-btn-color: var(--acento-primario);
+  --bs-btn-hover-bg: var(--primario);
+  --bs-btn-hover-border-color: var(--primario);
+  --bs-btn-hover-color: #04262D;
+  --bs-btn-disabled-bg: transparent;
+  --bs-btn-disabled-border-color: var(--primario);
+  --bs-btn-disabled-color: var(--acento-primario);
+  border-width: 2px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+/* Botones de reproducción */
+.btn-control,
+.btn-metrica {
+  --color-control: var(--primario);   /* color por defecto */
+
+  --bs-btn-bg: transparent;
+  --bs-btn-border-color: var(--borde);
+  --bs-btn-color: var(--texto);
+  --bs-btn-hover-bg: var(--color-control);
+  --bs-btn-hover-border-color: var(--color-control);
+  --bs-btn-hover-color: #0B0B0E;
+  --bs-btn-active-bg: var(--color-control);
+  --bs-btn-active-border-color: var(--color-control);
+  --bs-btn-active-color: #0B0B0E;
+  --bs-btn-disabled-bg: transparent;
+  --bs-btn-disabled-border-color: var(--borde);
+  --bs-btn-disabled-color: var(--texto-suave);
+  border-radius: 20px;
+  font-weight: 500;
+}
+
+/* Un color por botón */
+.control-iniciar   { --color-control: var(--terciario); }        /* verde   */
+.control-pausar    { --color-control: var(--barra-comparando); } /* ámbar   */
+.control-paso      { --color-control: var(--primario); }       /* índigo  */
+.control-reiniciar { --color-control: var(--barra-escribiendo); }/* rosa    */
+
+/* Colores de cada métrica*/
+.met-tiempo        { --color-control: var(--terciario); }        /* verde  */
+.met-comparaciones { --color-control: var(--primario); }         /* cian   */
+.met-intercambios  { --color-control: var(--barra-comparando); } /* ámbar  */
+.met-escrituras    { --color-control: var(--barra-escribiendo); }/* rosa   */
+
+/* Botones de velocidad (el label es lo que se ve) */
+.btn-velocidad {
+  --bs-btn-bg: var(--superficie-2);
+  --bs-btn-border-color: var(--borde);
+  --bs-btn-color: var(--texto-suave);
+  --bs-btn-hover-bg: var(--borde);
+  --bs-btn-hover-color: var(--texto);
+  /* Opción seleccionada */
+  --bs-btn-active-bg: var(--primario);
+  --bs-btn-active-border-color: var(--primario);
+  --bs-btn-active-color: #04262D;
+}
+
+/* Slider de Bootstrap en color primario */
+.form-range::-webkit-slider-thumb { background: var(--primario); }
+.form-range::-moz-range-thumb     { background: var(--primario); }
+
+.form-control {
+  background: var(--fondo);
+  border-color: var(--borde);
+  color: var(--texto);
+  font-family: var(--bs-font-monospace);
+}
+
+.form-control:focus {
+  background: var(--fondo);
+  color: var(--texto);
+  border-color: var(--primario);
+  box-shadow: 0 0 0 .2rem rgba(6, 182, 212, .2);
+}
+
+/* =========================================================================
+   Página 1: Visualizador
+   ========================================================================= */
+
+/* Lista de algoritmos seleccionables */
+.algoritmo {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: var(--superficie-2);
+  border: 1px solid var(--borde);
+  border-radius: 14px;
+  padding: .55rem .75rem;
+  margin-bottom: .5rem;
+  color: var(--texto);
+  transition: transform .15s ease, border-color .15s ease;
+}
+
+.algoritmo:hover { border-color: var(--neutro); transform: scale(1.02); }
+
+.algoritmo.activo {
+  border-color: var(--primario);
+  box-shadow: 0 0 0 1px var(--primario);
+}
+
+.algoritmo .punto {
+  display: inline-block;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  margin-right: .4rem;
+}
+
+.algoritmo small { color: var(--texto-suave); }
+
+.etiqueta-complejidad {
+  font-family: var(--bs-font-monospace);
+  font-size: .72rem;
+  background: var(--fondo);
+  border: 1px solid var(--borde);
+  border-radius: 4px;
+  padding: 0 .35rem;
+}
+
+/* Métricas (comparaciones, intercambios...) */
+.metrica {
+  background: var(--superficie-2);
+  border: 1px solid var(--borde);
+  border-radius: 14px;
+  padding: .5rem .75rem;
+  min-width: 130px;
+}
+
+.metrica .nombre {
+  font-size: .7rem;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--texto-suave);
+}
+
+.metrica .valor {
+  font-family: var(--bs-font-monospace);
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+/* Leyenda de colores */
+.leyenda { font-size: .8rem; color: var(--texto-suave); }
+.leyenda i {
+  display: inline-block;
+  width: 10px; height: 10px;
+  border-radius: 2px;
+  margin-right: .3rem;
+  vertical-align: -1px;
+}
+
+/* Contenedor de las barras. Las clases .barra, .comparando, .escribiendo y
+   .ordenado las pone js/visualizador/barras.js; no cambiar sus nombres. */
+#lienzo {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 420px;
+  padding: .75rem;
+  background: var(--fondo);
+  border: 1px solid var(--borde);
+  border-radius: 14px;
+}
+
+.barra {
+  flex: 1;
+  background: var(--barra-inactiva);
+  border-radius: 2px 2px 0 0;
+  transition: height 60ms linear;
+}
+
+.barra.comparando  { background: var(--barra-comparando); }
+.barra.escribiendo { background: var(--barra-escribiendo); }
+.barra.ordenado    { background: var(--barra-ordenada); }
+
+/* =========================================================================
+   Página 2: Comparador
+   ========================================================================= */
+
+.chip-n {
+  font-family: var(--bs-font-monospace);
+  font-size: .72rem;
+  border: 1px solid var(--borde);
+  border-radius: 4px;
+  padding: .1rem .4rem;
+  margin: 0 .25rem .25rem 0;
+  display: inline-block;
+}
+
+.linea-algoritmo {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  background: var(--superficie-2);
+  border: 1px solid var(--borde);
+  border-radius: 14px;
+  padding: .5rem .75rem;
+  margin-bottom: .5rem;
+  cursor: pointer;
+}
+
+.linea-algoritmo .form-check-input { margin: 0; cursor: inherit; }
+
+/* Casillas y switch con el color primario en lugar del azul de Bootstrap */
+.form-check-input:checked {
+  background-color: var(--primario);
+  border-color: var(--primario);
+}
+.form-check-input:focus { box-shadow: 0 0 0 .2rem rgba(6, 182, 212, .25); }
+
+.linea-algoritmo .muestra-color {
+  width: 14px; height: 3px;
+  border-radius: 2px;
+}
+
+.contenedor-grafica {
+  position: relative;
+  height: 440px;
+}
+
+.tabla-resultados {
+  --bs-table-bg: transparent;
+  --bs-table-color: var(--texto);
+  font-family: var(--bs-font-monospace);
+  font-size: .82rem;
+}

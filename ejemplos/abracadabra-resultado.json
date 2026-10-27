@@ -1,0 +1,189 @@
+{
+  "_nota": "bytesHfmn no va aqui: se carga de ejemplos/abracadabra.hfmn como Uint8Array",
+  "texto": "abracadabra",
+  "metadatos": {
+    "titulo": "abracadabra",
+    "origen": "local",
+    "nombreArchivo": "abracadabra.txt"
+  },
+  "frecuencias": [
+    {
+      "codePoint": 97,
+      "simbolo": "a",
+      "frecuencia": 5
+    },
+    {
+      "codePoint": 98,
+      "simbolo": "b",
+      "frecuencia": 2
+    },
+    {
+      "codePoint": 99,
+      "simbolo": "c",
+      "frecuencia": 1
+    },
+    {
+      "codePoint": 100,
+      "simbolo": "d",
+      "frecuencia": 1
+    },
+    {
+      "codePoint": 114,
+      "simbolo": "r",
+      "frecuencia": 2
+    }
+  ],
+  "pasos": [
+    {
+      "tipo": "hoja",
+      "id": 0,
+      "simbolo": "a",
+      "codePoint": 97,
+      "frecuencia": 5
+    },
+    {
+      "tipo": "hoja",
+      "id": 1,
+      "simbolo": "b",
+      "codePoint": 98,
+      "frecuencia": 2
+    },
+    {
+      "tipo": "hoja",
+      "id": 2,
+      "simbolo": "c",
+      "codePoint": 99,
+      "frecuencia": 1
+    },
+    {
+      "tipo": "hoja",
+      "id": 3,
+      "simbolo": "d",
+      "codePoint": 100,
+      "frecuencia": 1
+    },
+    {
+      "tipo": "hoja",
+      "id": 4,
+      "simbolo": "r",
+      "codePoint": 114,
+      "frecuencia": 2
+    },
+    {
+      "tipo": "fusion",
+      "id": 5,
+      "izquierdo": 2,
+      "derecho": 3,
+      "frecuencia": 2
+    },
+    {
+      "tipo": "fusion",
+      "id": 6,
+      "izquierdo": 1,
+      "derecho": 4,
+      "frecuencia": 4
+    },
+    {
+      "tipo": "fusion",
+      "id": 7,
+      "izquierdo": 5,
+      "derecho": 6,
+      "frecuencia": 6
+    },
+    {
+      "tipo": "fusion",
+      "id": 8,
+      "izquierdo": 0,
+      "derecho": 7,
+      "frecuencia": 11
+    }
+  ],
+  "codigos": [
+    {
+      "simbolo": "a",
+      "codePoint": 97,
+      "frecuencia": 5,
+      "codigo": "0"
+    },
+    {
+      "simbolo": "b",
+      "codePoint": 98,
+      "frecuencia": 2,
+      "codigo": "110"
+    },
+    {
+      "simbolo": "c",
+      "codePoint": 99,
+      "frecuencia": 1,
+      "codigo": "100"
+    },
+    {
+      "simbolo": "d",
+      "codePoint": 100,
+      "frecuencia": 1,
+      "codigo": "101"
+    },
+    {
+      "simbolo": "r",
+      "codePoint": 114,
+      "frecuencia": 2,
+      "codigo": "111"
+    }
+  ],
+  "bitsRelleno": 1,
+  "totalBits": 23,
+  "zonas": [
+    {
+      "nombre": "firma",
+      "inicio": 0,
+      "fin": 4
+    },
+    {
+      "nombre": "version",
+      "inicio": 4,
+      "fin": 5
+    },
+    {
+      "nombre": "relleno",
+      "inicio": 5,
+      "fin": 6
+    },
+    {
+      "nombre": "longitudMetadatos",
+      "inicio": 6,
+      "fin": 8
+    },
+    {
+      "nombre": "metadatos",
+      "inicio": 8,
+      "fin": 83
+    },
+    {
+      "nombre": "totalCaracteres",
+      "inicio": 83,
+      "fin": 87
+    },
+    {
+      "nombre": "simbolosDistintos",
+      "inicio": 87,
+      "fin": 91
+    },
+    {
+      "nombre": "tabla",
+      "inicio": 91,
+      "fin": 131
+    },
+    {
+      "nombre": "datos",
+      "inicio": 131,
+      "fin": 134
+    }
+  ],
+  "tamanos": {
+    "original": 11,
+    "datos": 3,
+    "hfmn": 134,
+    "razon": 12.1818,
+    "ahorro": -11.1818
+  }
+}

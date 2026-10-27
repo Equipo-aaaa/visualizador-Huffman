@@ -1,0 +1,32 @@
+[
+  {
+    "simbolo": "a",
+    "codePoint": 97,
+    "frecuencia": 5,
+    "codigo": "0"
+  },
+  {
+    "simbolo": "b",
+    "codePoint": 98,
+    "frecuencia": 2,
+    "codigo": "110"
+  },
+  {
+    "simbolo": "c",
+    "codePoint": 99,
+    "frecuencia": 1,
+    "codigo": "100"
+  },
+  {
+    "simbolo": "d",
+    "codePoint": 100,
+    "frecuencia": 1,
+    "codigo": "101"
+  },
+  {
+    "simbolo": "r",
+    "codePoint": 114,
+    "frecuencia": 2,
+    "codigo": "111"
+  }
+]

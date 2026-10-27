@@ -1,0 +1,65 @@
+[
+  {
+    "tipo": "hoja",
+    "id": 0,
+    "simbolo": "a",
+    "codePoint": 97,
+    "frecuencia": 5
+  },
+  {
+    "tipo": "hoja",
+    "id": 1,
+    "simbolo": "b",
+    "codePoint": 98,
+    "frecuencia": 2
+  },
+  {
+    "tipo": "hoja",
+    "id": 2,
+    "simbolo": "c",
+    "codePoint": 99,
+    "frecuencia": 1
+  },
+  {
+    "tipo": "hoja",
+    "id": 3,
+    "simbolo": "d",
+    "codePoint": 100,
+    "frecuencia": 1
+  },
+  {
+    "tipo": "hoja",
+    "id": 4,
+    "simbolo": "r",
+    "codePoint": 114,
+    "frecuencia": 2
+  },
+  {
+    "tipo": "fusion",
+    "id": 5,
+    "izquierdo": 2,
+    "derecho": 3,
+    "frecuencia": 2
+  },
+  {
+    "tipo": "fusion",
+    "id": 6,
+    "izquierdo": 1,
+    "derecho": 4,
+    "frecuencia": 4
+  },
+  {
+    "tipo": "fusion",
+    "id": 7,
+    "izquierdo": 5,
+    "derecho": 6,
+    "frecuencia": 6
+  },
+  {
+    "tipo": "fusion",
+    "id": 8,
+    "izquierdo": 0,
+    "derecho": 7,
+    "frecuencia": 11
+  }
+]

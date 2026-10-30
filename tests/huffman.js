@@ -10,7 +10,6 @@ console.table(resultadoAbra);
 console.log("\n=== Prueba 2: Definition of Done (ñ y emoji) ===");
 const textoEspecial = "año 🚀";
 const resultadoEspecial = contarFrecuencias(textoEspecial);
-console.table(resultadoEspecial);
 
 console.log("\n=== Prueba 3: Cola de Prioridad Genérica y Desempate ===");
 
@@ -35,3 +34,4 @@ console.log("Extrayendo en orden (esperado: m(1), a(2), z(2), x(5)):");
 while (!cola.estaVacia()) {
     console.log(cola.extraer());
 }
+console.table(resultadoEspecial);

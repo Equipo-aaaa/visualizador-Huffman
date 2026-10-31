@@ -8,12 +8,14 @@ import { simboloVisible } from './tablaCodigos.js';
 const SVG = 'http://www.w3.org/2000/svg';
 
 // Medidas del dibujo, en unidades del SVG.
-const SEPARACION_X = 56;   // ancho que ocupa cada hoja
-const SEPARACION_Y = 78;   // distancia vertical entre niveles
-const RADIO = 20;          // radio de cada nodo
+const SEPARACION_X = 56;  
+const SEPARACION_Y = 78;   
+const RADIO = 20;          
 const MARGEN = 36;
+const FACTOR_ZOOM = 1.25;   // cuánto acerca o aleja cada clic o vuelta de la rueda
+const ZOOM_MAXIMO = 8;      // veces que se puede acercar respecto a 1 píxel por unidad
 
-// Crea un elemento SVG con sus atributos (como un dict de Python, pero para el DOM).
+// Crea un elemento SVG con sus atributos 
 function crear(nombre, atributos = {}, texto) {
   const elemento = document.createElementNS(SVG, nombre);
   for (const [clave, valor] of Object.entries(atributos)) elemento.setAttribute(clave, valor);
@@ -22,14 +24,12 @@ function crear(nombre, atributos = {}, texto) {
 }
 
 // Convierte la lista de pasos en nodos enlazados.
-// `Map` es el equivalente de `dict` en Python: id -> nodo.
 function construirNodos(pasos) {
   const nodos = new Map();
   for (const paso of pasos) {
     if (paso.tipo === 'hoja') {
       nodos.set(paso.id, { ...paso, hijos: [] });
     } else {
-      // El contrato garantiza que izquierdo y derecho ya aparecieron antes.
       nodos.set(paso.id, { ...paso, hijos: [nodos.get(paso.izquierdo), nodos.get(paso.derecho)] });
     }
   }
@@ -37,16 +37,11 @@ function construirNodos(pasos) {
     nodos,
     hojas: pasos.filter((p) => p.tipo === 'hoja').map((p) => nodos.get(p.id)),
     fusiones: pasos.filter((p) => p.tipo === 'fusion'),
-    // La última fusión (o la única hoja) es la raíz.
+    // La última fusión es la raíz.
     raizFinal: nodos.get(pasos[pasos.length - 1].id),
   };
 }
 
-// Asigna posición a cada nodo de un "bosque" (lista de raíces):
-//  - las hojas se reparten de izquierda a derecha, pasando de un árbol al siguiente;
-//  - cada nodo interno queda centrado sobre sus dos hijos;
-//  - la profundidad (contada desde la raíz de su propio árbol) decide la altura.
-// Con una sola raíz esto es exactamente el árbol final. Devuelve la profundidad máxima.
 function acomodar(raices) {
   let siguienteHoja = 0;
   let profundidadMaxima = 0;
@@ -64,13 +59,12 @@ function acomodar(raices) {
       nodo.x = (izq.x + der.x) / 2;
     }
   }
-  // Recursión: la profundidad de un árbol de Huffman es chica (pocas decenas
-  // incluso con un libro), así que no hay riesgo de pasarse del límite de la pila.
+  // Recursión
   for (const raiz of raices) visitar(raiz, 0);
   return profundidadMaxima;
 }
 
-// Recorre el bosque y devuelve todos los nodos que hay que dibujar.
+// Recorre y devuelve todos los nodos que hay que dibujar.
 function nodosVisibles(raices) {
   const visibles = [];
   const pila = [...raices];
@@ -82,27 +76,28 @@ function nodosVisibles(raices) {
   return visibles;
 }
 
-// Dibuja un bosque en un SVG nuevo y lo devuelve.
-// `resaltados`: nodos que se acaban de fusionar; `nuevo`: el nodo que resultó.
-function dibujarBosque(raices, { ancho, alto }, resaltados = [], nuevo = null) {
+function textoVista(v) {
+  return `${v.x} ${v.y} ${v.w} ${v.h}`;
+}
+
+
+function dibujarBosque(raices, vista, resaltados = [], nuevo = null) {
   acomodar(raices);
   const visibles = nodosVisibles(raices);
 
   const svg = crear('svg', {
     class: 'arbolAnimado-svg',
-    viewBox: `0 0 ${ancho} ${alto}`,
-    width: ancho,
-    height: alto,
+    viewBox: textoVista(vista),
     role: 'img',
     'aria-label': 'Árbol de Huffman',
   });
 
-  // Primero las ramas, para que los nodos queden encima.
+
   const ramas = crear('g', { class: 'arbolAnimado-ramas' });
   for (const nodo of visibles) {
     nodo.hijos.forEach((hijo, indice) => {
       ramas.append(crear('line', { x1: nodo.x, y1: nodo.y, x2: hijo.x, y2: hijo.y, class: 'arbolAnimado-rama' }));
-      // Etiqueta 0 / 1 a medio camino, corrida hacia el lado de su hijo.
+    
       const lado = indice === 0 ? -1 : 1;
       ramas.append(crear('text', {
         x: (nodo.x + hijo.x) / 2 + lado * 9,
@@ -166,8 +161,8 @@ export function montarArbol(contenedor, pasos, opciones = { msPorPaso: 400 }) {
   const msPorPaso = opciones?.msPorPaso ?? 400;
   const { nodos, hojas, fusiones, raizFinal } = construirNodos(pasos);
 
-  // El tamaño del SVG se calcula con el árbol final y no cambia durante la animación,
-  // para que el dibujo no "salte" de tamaño en cada paso.
+  // El tamaño del árbol final se calcula una vez; sirve para "ajustar" la vista y
+  // no cambia durante la animación, así el dibujo no salta de tamaño en cada paso.
   const profundidadFinal = acomodar([raizFinal]);
   const medidas = {
     ancho: MARGEN * 2 + Math.max(hojas.length - 1, 0) * SEPARACION_X,
@@ -180,22 +175,29 @@ export function montarArbol(contenedor, pasos, opciones = { msPorPaso: 400 }) {
   const botonPausa = crearBoton('Pausar');
   const botonReiniciar = crearBoton('Reiniciar');
   const botonFinal = crearBoton('Ir al final');
+  const botonMas = crearBoton('＋');
+  const botonMenos = crearBoton('－');
+  const botonAjustar = crearBoton('Ajustar');
+  botonMas.setAttribute('aria-label', 'Acercar');
+  botonMenos.setAttribute('aria-label', 'Alejar');
   const estado = document.createElement('span');
   estado.className = 'arbolAnimado-estado';
-  barra.append(botonPausa, botonReiniciar, botonFinal, estado);
+  barra.append(botonPausa, botonReiniciar, botonFinal, botonMas, botonMenos, botonAjustar, estado);
 
   const marco = document.createElement('div');
   marco.className = 'arbolAnimado-marco';
+  marco.tabIndex = 0;   // para poder usar el teclado: + - 0 y flechas
+  marco.setAttribute('aria-label', 'Árbol de Huffman. Rueda para acercar, arrastrar para mover.');
   contenedor.append(barra, marco);
 
-  // --- Estado de la animación ---
-  let raices = [];            // el "bosque": árboles que todavía no se han unido
+  //  Estado de la animación 
+  let raices = [];           
   let paso = 0;               // cuántas fusiones llevamos
   let temporizador = null;
   let ultimaFusion = null;    // { izq, der, nuevo } del paso recién aplicado
 
   function reiniciarBosque() {
-    raices = [...hojas];      // [...lista] es como lista.copy() en Python
+    raices = [...hojas];      
     paso = 0;
     ultimaFusion = null;
   }
@@ -215,9 +217,90 @@ export function montarArbol(contenedor, pasos, opciones = { msPorPaso: 400 }) {
 
   const terminado = () => paso >= fusiones.length;
 
+  // --- Zoom y desplazamiento ---
+  let vista = null;       // se calcula la primera vez que se dibuja
+  let anchoAjustado = 0;  // ancho de la ventana cuando todo el árbol cabe
+  let svgActual = null;
+
+  const tamanoMarco = () => ({ cw: marco.clientWidth || 800, ch: marco.clientHeight || 448 });
+
+  function aplicarVista() {
+    svgActual?.setAttribute('viewBox', textoVista(vista));
+  }
+
+  // Muestra el árbol completo, centrado. Con un libro quedará muy chico: se acerca con zoom.
+  function ajustar() {
+    const { cw, ch } = tamanoMarco();
+    const escala = Math.max(medidas.ancho / cw, medidas.alto / ch, 0.6);   // 0.6 evita ampliar de más árboles diminutos
+    const w = cw * escala;
+    const h = ch * escala;
+    anchoAjustado = w;
+    vista = { x: (medidas.ancho - w) / 2, y: (medidas.alto - h) / 2, w, h };
+    aplicarVista();
+  }
+
+  // factor < 1 acerca y > 1 aleja. 
+  function zoom(factor, px = 0.5, py = 0.5) {
+    const { cw } = tamanoMarco();
+    const minimo = Math.min(cw / ZOOM_MAXIMO, anchoAjustado);
+    const nuevoAncho = Math.min(Math.max(vista.w * factor, minimo), anchoAjustado * 1.5);
+    const razon = nuevoAncho / vista.w;
+    const nuevoAlto = vista.h * razon;
+    vista.x += (vista.w - nuevoAncho) * px;
+    vista.y += (vista.h - nuevoAlto) * py;
+    vista.w = nuevoAncho;
+    vista.h = nuevoAlto;
+    aplicarVista();
+  }
+
+  marco.addEventListener('wheel', (evento) => {
+    evento.preventDefault();   
+    const caja = marco.getBoundingClientRect();
+    zoom(evento.deltaY < 0 ? 1 / FACTOR_ZOOM : FACTOR_ZOOM,
+      (evento.clientX - caja.left) / caja.width, (evento.clientY - caja.top) / caja.height);
+  }, { passive: false });
+
+  let arrastre = null;
+  marco.addEventListener('pointerdown', (evento) => {
+    if (evento.button !== 0) return;
+    arrastre = { x: evento.clientX, y: evento.clientY };
+    marco.setPointerCapture(evento.pointerId);   
+    marco.classList.add('arbolAnimado-arrastrando');
+  });
+  marco.addEventListener('pointermove', (evento) => {
+    if (!arrastre) return;
+    const unidadesPorPixel = vista.w / tamanoMarco().cw;
+    vista.x -= (evento.clientX - arrastre.x) * unidadesPorPixel;
+    vista.y -= (evento.clientY - arrastre.y) * unidadesPorPixel;
+    arrastre = { x: evento.clientX, y: evento.clientY };
+    aplicarVista();
+  });
+  const soltar = () => { arrastre = null; marco.classList.remove('arbolAnimado-arrastrando'); };
+  marco.addEventListener('pointerup', soltar);
+  marco.addEventListener('pointercancel', soltar);
+
+  marco.addEventListener('keydown', (evento) => {
+    const paso10 = vista.w * 0.1;
+    if (evento.key === '+' || evento.key === '=') zoom(1 / FACTOR_ZOOM);
+    else if (evento.key === '-') zoom(FACTOR_ZOOM);
+    else if (evento.key === '0') ajustar();
+    else if (evento.key === 'ArrowLeft') { vista.x -= paso10; aplicarVista(); }
+    else if (evento.key === 'ArrowRight') { vista.x += paso10; aplicarVista(); }
+    else if (evento.key === 'ArrowUp') { vista.y -= paso10; aplicarVista(); }
+    else if (evento.key === 'ArrowDown') { vista.y += paso10; aplicarVista(); }
+    else return;
+    evento.preventDefault();
+  });
+  botonMas.addEventListener('click', () => zoom(1 / FACTOR_ZOOM));
+  botonMenos.addEventListener('click', () => zoom(FACTOR_ZOOM));
+  botonAjustar.addEventListener('click', ajustar);
+
   function dibujar() {
     const resaltados = ultimaFusion ? [ultimaFusion.izq, ultimaFusion.der, ultimaFusion.nuevo] : [];
-    marco.replaceChildren(dibujarBosque(raices, medidas, resaltados, ultimaFusion?.nuevo ?? null));
+    if (!vista) ajustar();   // primera vez: ya hay tamaño de marco porque está en el DOM
+    // El SVG se vuelve a crear en cada paso, pero `vista` se conserva: el zoom no se pierde al animar.
+    svgActual = dibujarBosque(raices, vista, resaltados, ultimaFusion?.nuevo ?? null);
+    marco.replaceChildren(svgActual);
 
     if (paso === 0) {
       estado.textContent = `${hojas.length} símbolos, cada uno con su frecuencia`;
@@ -268,7 +351,7 @@ export function montarArbol(contenedor, pasos, opciones = { msPorPaso: 400 }) {
     dibujar();
   });
 
-  // El contrato pide que arranque sola al montarse.
+ 
   reproducir();
 
   return {

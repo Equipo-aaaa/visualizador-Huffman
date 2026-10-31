@@ -1,17 +1,28 @@
-/* Estilos de js/visualizador/arbolAnimado.js. Clases con prefijo "arbolAnimado-". */
+/* Estilos de js/visualizador/arbolAnimado.js. */
 
 .arbolAnimado-marco {
-  overflow: auto;              /* árboles anchos se recorren con la barra; el zoom llega en AN-04 */
-  padding: 0.5rem;
+  height: 28rem;
+  overflow: hidden;          
+  touch-action: none;         
+  user-select: none;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 0.5rem;
   background: var(--fondo, #111114);
 }
 
+.arbolAnimado-marco:focus-visible {
+  outline: 2px solid var(--primario, #06B6D4);
+  outline-offset: 2px;
+}
+
+.arbolAnimado-arrastrando {
+  cursor: grabbing;
+}
+
 .arbolAnimado-svg {
   display: block;
-  margin: 0 auto;
-  max-width: none;
+  width: 100%;
+  height: 100%;
 }
 
 .arbolAnimado-rama {
@@ -51,7 +62,7 @@
   color: rgba(255, 255, 255, 0.6);
 }
 
-/* --- Controles y estado de la animación --- */
+/* --- Controles y estado --- */
 .arbolAnimado-barra {
   display: flex;
   flex-wrap: wrap;

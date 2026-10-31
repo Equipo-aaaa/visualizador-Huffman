@@ -1,0 +1,71 @@
+/* Estilos de js/visualizador/tablaCodigos.js. Clases con prefijo "tablaCodigos-". */
+
+.tablaCodigos-envoltura {
+  max-height: 24rem;
+  overflow: auto;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.5rem;
+}
+
+.tablaCodigos-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+.tablaCodigos-tabla th,
+.tablaCodigos-tabla td {
+  padding: 0.4rem 0.9rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.tablaCodigos-tabla thead th {
+  position: sticky;
+  top: 0;
+  background: var(--superficie, #1A1A1F);
+  z-index: 1;
+}
+
+.tablaCodigos-tabla tbody tr:hover {
+  background: rgba(6, 182, 212, 0.08);
+}
+
+.tablaCodigos-orden {
+  background: none;
+  border: 0;
+  padding: 0;
+  color: var(--primario, #06B6D4);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.tablaCodigos-orden:focus-visible {
+  outline: 2px solid var(--primario, #06B6D4);
+  outline-offset: 3px;
+}
+
+.tablaCodigos-simbolo {
+  display: inline-block;
+  min-width: 2.2rem;
+  padding: 0.05rem 0.4rem;
+  text-align: center;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--ambar, #F59E0B);
+  background: rgba(245, 158, 11, 0.12);
+  border-radius: 0.3rem;
+}
+
+.tablaCodigos-codigo {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--terciario, #10B981);
+  letter-spacing: 0.08em;
+}
+
+.tablaCodigos-pie,
+.tablaCodigos-vacio {
+  margin: 0.6rem 0 0;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.9rem;
+}

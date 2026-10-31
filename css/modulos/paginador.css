@@ -1,0 +1,46 @@
+/* Estilos de js/visualizador/paginador.js. Clases con prefijo "paginador-". */
+
+.paginador-barra {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.6rem;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.paginador-boton {
+  min-width: 2rem;
+  padding: 0.15rem 0.5rem;
+  color: var(--primario, #06B6D4);
+  background: transparent;
+  border: 1px solid rgba(6, 182, 212, 0.5);
+  border-radius: 0.35rem;
+  cursor: pointer;
+}
+
+.paginador-boton:hover:not(:disabled) {
+  background: rgba(6, 182, 212, 0.12);
+}
+
+.paginador-boton:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.paginador-entrada {
+  width: 5.5rem;
+  padding: 0.15rem 0.4rem;
+  color: inherit;
+  background: var(--superficie, #1A1A1F);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.35rem;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.paginador-boton:focus-visible,
+.paginador-entrada:focus-visible {
+  outline: 2px solid var(--primario, #06B6D4);
+  outline-offset: 2px;
+}

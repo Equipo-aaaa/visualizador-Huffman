@@ -50,3 +50,29 @@
   margin: 0;
   color: rgba(255, 255, 255, 0.6);
 }
+
+/* --- Controles y estado de la animación --- */
+.arbolAnimado-barra {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.6rem;
+}
+
+.arbolAnimado-estado {
+  flex: 1 1 16rem;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.9rem;
+}
+
+/* Los dos nodos que se unen en este paso, y el nodo que resulta. */
+.arbolAnimado-nodo.arbolAnimado-resaltado circle {
+  stroke: var(--ambar, #F59E0B);
+  stroke-width: 3.5;
+}
+
+.arbolAnimado-nodo.arbolAnimado-nuevo circle {
+  fill: rgba(244, 63, 94, 0.25);
+  stroke: var(--rosa, #F43F5E);
+}

@@ -1,7 +1,7 @@
-// AN-02 · Árbol de Huffman dibujado a partir de la lista de pasos.
-// Solo lee los pasos (contrato-pasos-arbol.md); no importa nada de js/huffman/.
-// Primera versión: dibuja el árbol terminado. La animación (AN-03) y el zoom (AN-04)
-// se agregan después sobre esta misma estructura.
+// Árbol de Huffman a partir de la lista de pasos (contrato-pasos-arbol.md).
+//  - Dibujo del árbol final en SVG (tarea "Dibujar el árbol final").
+//  - Animación de la construcción (tarea "Animación de la construcción del árbol").
+// Solo lee los pasos; no importa nada de js/huffman/.
 
 import { simboloVisible } from './tablaCodigos.js';
 
@@ -21,8 +21,8 @@ function crear(nombre, atributos = {}, texto) {
   return elemento;
 }
 
-// Convierte la lista de pasos en un diccionario id -> nodo.
-// `Map` es el equivalente de `dict` en Python.
+// Convierte la lista de pasos en nodos enlazados.
+// `Map` es el equivalente de `dict` en Python: id -> nodo.
 function construirNodos(pasos) {
   const nodos = new Map();
   for (const paso of pasos) {
@@ -33,16 +33,21 @@ function construirNodos(pasos) {
       nodos.set(paso.id, { ...paso, hijos: [nodos.get(paso.izquierdo), nodos.get(paso.derecho)] });
     }
   }
-  // La última fusión (o la única hoja) es la raíz.
-  return { nodos, raiz: nodos.get(pasos[pasos.length - 1].id) };
+  return {
+    nodos,
+    hojas: pasos.filter((p) => p.tipo === 'hoja').map((p) => nodos.get(p.id)),
+    fusiones: pasos.filter((p) => p.tipo === 'fusion'),
+    // La última fusión (o la única hoja) es la raíz.
+    raizFinal: nodos.get(pasos[pasos.length - 1].id),
+  };
 }
 
-// Asigna posición a cada nodo:
-//  - las hojas se reparten de izquierda a derecha (recorrido en orden);
+// Asigna posición a cada nodo de un "bosque" (lista de raíces):
+//  - las hojas se reparten de izquierda a derecha, pasando de un árbol al siguiente;
 //  - cada nodo interno queda centrado sobre sus dos hijos;
-//  - la profundidad decide la altura.
-// Devuelve el número de hojas y la profundidad máxima.
-function acomodar(raiz) {
+//  - la profundidad (contada desde la raíz de su propio árbol) decide la altura.
+// Con una sola raíz esto es exactamente el árbol final. Devuelve la profundidad máxima.
+function acomodar(raices) {
   let siguienteHoja = 0;
   let profundidadMaxima = 0;
 
@@ -61,17 +66,27 @@ function acomodar(raiz) {
   }
   // Recursión: la profundidad de un árbol de Huffman es chica (pocas decenas
   // incluso con un libro), así que no hay riesgo de pasarse del límite de la pila.
-  visitar(raiz, 0);
-  return { hojas: siguienteHoja, profundidad: profundidadMaxima };
+  for (const raiz of raices) visitar(raiz, 0);
+  return profundidadMaxima;
 }
 
-function dibujarArbol(contenedor, pasos) {
-  contenedor.replaceChildren();
-  const { nodos, raiz } = construirNodos(pasos);
-  const { hojas, profundidad } = acomodar(raiz);
+// Recorre el bosque y devuelve todos los nodos que hay que dibujar.
+function nodosVisibles(raices) {
+  const visibles = [];
+  const pila = [...raices];
+  while (pila.length > 0) {
+    const nodo = pila.pop();
+    visibles.push(nodo);
+    pila.push(...nodo.hijos);
+  }
+  return visibles;
+}
 
-  const ancho = MARGEN * 2 + Math.max(hojas - 1, 0) * SEPARACION_X;
-  const alto = MARGEN * 2 + profundidad * SEPARACION_Y + 18;
+// Dibuja un bosque en un SVG nuevo y lo devuelve.
+// `resaltados`: nodos que se acaban de fusionar; `nuevo`: el nodo que resultó.
+function dibujarBosque(raices, { ancho, alto }, resaltados = [], nuevo = null) {
+  acomodar(raices);
+  const visibles = nodosVisibles(raices);
 
   const svg = crear('svg', {
     class: 'arbolAnimado-svg',
@@ -84,30 +99,29 @@ function dibujarArbol(contenedor, pasos) {
 
   // Primero las ramas, para que los nodos queden encima.
   const ramas = crear('g', { class: 'arbolAnimado-ramas' });
-  for (const nodo of nodos.values()) {
+  for (const nodo of visibles) {
     nodo.hijos.forEach((hijo, indice) => {
       ramas.append(crear('line', { x1: nodo.x, y1: nodo.y, x2: hijo.x, y2: hijo.y, class: 'arbolAnimado-rama' }));
       // Etiqueta 0 / 1 a medio camino, corrida hacia el lado de su hijo.
       const lado = indice === 0 ? -1 : 1;
-      ramas.append(
-        crear('text', {
-          x: (nodo.x + hijo.x) / 2 + lado * 9,
-          y: (nodo.y + hijo.y) / 2 - 3,
-          class: 'arbolAnimado-bit',
-          'text-anchor': 'middle',
-        }, String(indice)),
-      );
+      ramas.append(crear('text', {
+        x: (nodo.x + hijo.x) / 2 + lado * 9,
+        y: (nodo.y + hijo.y) / 2 - 3,
+        class: 'arbolAnimado-bit',
+        'text-anchor': 'middle',
+      }, String(indice)));
     });
   }
   svg.append(ramas);
 
   const capaNodos = crear('g', { class: 'arbolAnimado-nodos' });
-  for (const nodo of nodos.values()) {
+  for (const nodo of visibles) {
     const esHoja = nodo.hijos.length === 0;
-    const grupo = crear('g', {
-      class: 'arbolAnimado-nodo ' + (esHoja ? 'arbolAnimado-hoja' : 'arbolAnimado-interno'),
-      transform: `translate(${nodo.x} ${nodo.y})`,
-    });
+    let clases = 'arbolAnimado-nodo ' + (esHoja ? 'arbolAnimado-hoja' : 'arbolAnimado-interno');
+    if (resaltados.includes(nodo)) clases += ' arbolAnimado-resaltado';
+    if (nodo === nuevo) clases += ' arbolAnimado-nuevo';
+
+    const grupo = crear('g', { class: clases, transform: `translate(${nodo.x} ${nodo.y})` });
     grupo.append(crear('circle', { r: RADIO }));
     if (esHoja) {
       // Hoja: el carácter dentro y su frecuencia debajo.
@@ -120,11 +134,21 @@ function dibujarArbol(contenedor, pasos) {
     capaNodos.append(grupo);
   }
   svg.append(capaNodos);
+  return svg;
+}
 
-  const marco = document.createElement('div');
-  marco.className = 'arbolAnimado-marco';
-  marco.append(svg);
-  contenedor.append(marco);
+// Texto corto para describir un nodo en el mensaje de cada paso.
+function describir(nodo) {
+  const frecuencia = nodo.frecuencia.toLocaleString('es-MX');
+  return nodo.hijos.length === 0 ? `«${simboloVisible(nodo.simbolo)}» (${frecuencia})` : `nodo (${frecuencia})`;
+}
+
+function crearBoton(texto) {
+  const boton = document.createElement('button');
+  boton.type = 'button';
+  boton.className = 'btn btn-sm btn-outline-info';
+  boton.textContent = texto;
+  return boton;
 }
 
 export function montarArbol(contenedor, pasos, opciones = { msPorPaso: 400 }) {
@@ -139,12 +163,121 @@ export function montarArbol(contenedor, pasos, opciones = { msPorPaso: 400 }) {
     return { reproducir() {}, detener() {}, destruir: () => contenedor.replaceChildren() };
   }
 
-  // `opciones` se usará en AN-03 (msPorPaso). Por ahora se dibuja el árbol final.
-  dibujarArbol(contenedor, pasos);
+  const msPorPaso = opciones?.msPorPaso ?? 400;
+  const { nodos, hojas, fusiones, raizFinal } = construirNodos(pasos);
+
+  // El tamaño del SVG se calcula con el árbol final y no cambia durante la animación,
+  // para que el dibujo no "salte" de tamaño en cada paso.
+  const profundidadFinal = acomodar([raizFinal]);
+  const medidas = {
+    ancho: MARGEN * 2 + Math.max(hojas.length - 1, 0) * SEPARACION_X,
+    alto: MARGEN * 2 + profundidadFinal * SEPARACION_Y + 18,
+  };
+
+  // --- Estructura de la vista ---
+  const barra = document.createElement('div');
+  barra.className = 'arbolAnimado-barra';
+  const botonPausa = crearBoton('Pausar');
+  const botonReiniciar = crearBoton('Reiniciar');
+  const botonFinal = crearBoton('Ir al final');
+  const estado = document.createElement('span');
+  estado.className = 'arbolAnimado-estado';
+  barra.append(botonPausa, botonReiniciar, botonFinal, estado);
+
+  const marco = document.createElement('div');
+  marco.className = 'arbolAnimado-marco';
+  contenedor.append(barra, marco);
+
+  // --- Estado de la animación ---
+  let raices = [];            // el "bosque": árboles que todavía no se han unido
+  let paso = 0;               // cuántas fusiones llevamos
+  let temporizador = null;
+  let ultimaFusion = null;    // { izq, der, nuevo } del paso recién aplicado
+
+  function reiniciarBosque() {
+    raices = [...hojas];      // [...lista] es como lista.copy() en Python
+    paso = 0;
+    ultimaFusion = null;
+  }
+
+  // Quita los dos nodos fusionados del bosque y pone el nuevo donde estaba el primero.
+  function aplicarFusion() {
+    const fusion = fusiones[paso];
+    const izq = nodos.get(fusion.izquierdo);
+    const der = nodos.get(fusion.derecho);
+    const nuevo = nodos.get(fusion.id);
+    const posicion = Math.min(raices.indexOf(izq), raices.indexOf(der));
+    raices = raices.filter((r) => r !== izq && r !== der);
+    raices.splice(posicion, 0, nuevo);   // splice(pos, 0, x) inserta, como lista.insert(pos, x)
+    ultimaFusion = { izq, der, nuevo };
+    paso += 1;
+  }
+
+  const terminado = () => paso >= fusiones.length;
+
+  function dibujar() {
+    const resaltados = ultimaFusion ? [ultimaFusion.izq, ultimaFusion.der, ultimaFusion.nuevo] : [];
+    marco.replaceChildren(dibujarBosque(raices, medidas, resaltados, ultimaFusion?.nuevo ?? null));
+
+    if (paso === 0) {
+      estado.textContent = `${hojas.length} símbolos, cada uno con su frecuencia`;
+    } else {
+      const { izq, der, nuevo } = ultimaFusion;
+      estado.textContent = `Paso ${paso} de ${fusiones.length}: ${describir(izq)} y ${describir(der)} forman un nodo de ${nuevo.frecuencia.toLocaleString('es-MX')}`;
+    }
+    if (terminado()) estado.textContent += fusiones.length > 0 ? ' · árbol terminado' : '';
+
+    botonPausa.textContent = temporizador !== null ? 'Pausar' : terminado() ? 'Repetir' : 'Continuar';
+  }
+
+  function programar() {
+    temporizador = setTimeout(avanzar, msPorPaso);
+  }
+
+  function avanzar() {
+    temporizador = null;
+    aplicarFusion();
+    if (!terminado()) programar();
+    dibujar();
+  }
+
+  function detener() {
+    clearTimeout(temporizador);
+    temporizador = null;
+    dibujar();
+  }
+
+  function reproducir() {
+    clearTimeout(temporizador);
+    reiniciarBosque();
+    if (!terminado()) programar();
+    dibujar();
+  }
+
+  botonPausa.addEventListener('click', () => {
+    if (temporizador !== null) detener();
+    else if (terminado()) reproducir();
+    else { programar(); dibujar(); }
+  });
+  botonReiniciar.addEventListener('click', reproducir);
+  botonFinal.addEventListener('click', () => {
+    clearTimeout(temporizador);
+    temporizador = null;
+    while (!terminado()) aplicarFusion();
+    ultimaFusion = null;      // el último cuadro es el árbol limpio, sin resaltados
+    dibujar();
+  });
+
+  // El contrato pide que arranque sola al montarse.
+  reproducir();
 
   return {
-    reproducir: () => dibujarArbol(contenedor, pasos),
-    detener() {},
-    destruir: () => contenedor.replaceChildren(),
+    reproducir,
+    detener,
+    destruir() {
+      clearTimeout(temporizador);   // si no se limpia, el temporizador seguiría dibujando en un contenedor ajeno
+      temporizador = null;
+      contenedor.replaceChildren();
+    },
   };
 }

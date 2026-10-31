@@ -23,17 +23,23 @@
   <script type="module">
     import { montarArbol } from '../js/visualizador/arbolAnimado.js';
     const contenedor = document.getElementById('arbol');
+    let instancia = null;   // se destruye la anterior para que su temporizador no siga dibujando
+
+    function mostrar(pasos) {
+      instancia?.destruir();
+      instancia = montarArbol(contenedor, pasos, { msPorPaso: 600 });
+    }
 
     async function mostrarEjemplo() {
       const respuesta = await fetch('../ejemplos/abracadabra-pasos.json');
-      montarArbol(contenedor, await respuesta.json());
+      mostrar(await respuesta.json());
     }
 
     document.getElementById('ejemplo').onclick = mostrarEjemplo;
     // Caso borde del contrato: una sola hoja, cero fusiones.
     document.getElementById('uno').onclick = () =>
-      montarArbol(contenedor, [{ tipo: 'hoja', id: 0, simbolo: 'a', codePoint: 97, frecuencia: 4 }]);
-    document.getElementById('vacio').onclick = () => montarArbol(contenedor, []);
+      mostrar([{ tipo: 'hoja', id: 0, simbolo: 'a', codePoint: 97, frecuencia: 4 }]);
+    document.getElementById('vacio').onclick = () => mostrar([]);
     mostrarEjemplo();
   </script>
 </body>

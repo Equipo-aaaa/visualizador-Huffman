@@ -1,3 +1,4 @@
+import { codificar } from '../js/huffman/codificador.js';
 import { generarCodigos, tablaCodigos } from '../js/huffman/codigos.js';
 import { comprimir } from '../js/huffman/comprimirHuffman.js';
 import { construirArbol } from '../js/huffman/arbol.js';
@@ -114,3 +115,36 @@ console.log("¿códigos iguales al ejemplo? (esperado: true):",
 console.log("¿texto y metadatos iguales? (esperado: true):",
     resultadoComprimir.texto === resumenEjemplo.texto &&
     JSON.stringify(resultadoComprimir.metadatos) === JSON.stringify(resumenEjemplo.metadatos));
+
+console.log("\n=== Prueba 13: codificar 'abracadabra' (DoD) ===");
+const codificado = codificar("abracadabra", mapaAbra);
+
+const aHex = bytes => Array.from(bytes, b => b.toString(16).padStart(2, '0').toUpperCase()).join(' ');
+
+console.log("Datos (esperado: 6E 8A DC):", aHex(codificado.datos));
+console.log("Bits útiles (esperado: 23):", codificado.totalBits);
+console.log("Bits de relleno (esperado: 1):", codificado.bitsRelleno);
+
+console.log("\n=== Prueba 14: comparar con el .hfmn real del contrato ===");
+const respuestaHfmn = await fetch('../ejemplos/abracadabra.hfmn');
+const bytesHfmn = new Uint8Array(await respuestaHfmn.arrayBuffer());
+
+console.log("Datos del .hfmn real (esperado: 6E 8A DC):", aHex(bytesHfmn.slice(131)));
+console.log("¿Mis datos son idénticos a los del archivo? (esperado: true):",
+    aHex(codificado.datos) === aHex(bytesHfmn.slice(131)));
+
+console.log("\n=== Prueba 15: casos borde ===");
+const vacioCodificado = codificar("", generarCodigos(arbolVacio.raiz));
+console.log("Texto vacío (esperado: 0 bytes, 0 bits, relleno 0):",
+    vacioCodificado.datos.length, vacioCodificado.totalBits, vacioCodificado.bitsRelleno);
+
+const unoCodificado = codificar("aaaa", generarCodigos(arbolUno.raiz));
+console.log("'aaaa' (esperado: 00, 4 bits, relleno 4):",
+    aHex(unoCodificado.datos), unoCodificado.totalBits, unoCodificado.bitsRelleno);
+
+console.log("\n=== Prueba 16: texto con ñ y emoji ===");
+const arbolEspecial = construirArbol(resultadoEspecial);
+const codificadoEspecial = codificar(textoEspecial, generarCodigos(arbolEspecial.raiz));
+console.log("¿Bytes y relleno cuadran con los bits? (esperado: true):",
+    codificadoEspecial.datos.length * 8 ===
+    codificadoEspecial.totalBits + codificadoEspecial.bitsRelleno);

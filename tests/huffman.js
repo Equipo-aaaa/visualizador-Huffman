@@ -16,7 +16,6 @@ console.table(resultadoEspecial);
 console.log("\n=== Prueba 3: Cola de Prioridad Genérica y Desempate ===");
 
 const compararHuffman = (a, b) => {
-
     if (a.frecuencia === b.frecuencia) {
         if (a.id < b.id) return -1;
         if (a.id > b.id) return 1;

@@ -1,3 +1,5 @@
+import { generarCodigos, tablaCodigos } from '../js/huffman/codigos.js';
+import { comprimir } from '../js/huffman/comprimirHuffman.js';
 import { construirArbol } from '../js/huffman/arbol.js';
 import { ColaPrioridad } from '../js/huffman/colaPrioridad.js';
 import { contarFrecuencias } from '../js/huffman/frecuencias.js';
@@ -16,6 +18,7 @@ console.table(resultadoEspecial);
 console.log("\n=== Prueba 3: Cola de Prioridad Genérica y Desempate ===");
 
 const compararHuffman = (a, b) => {
+
     if (a.frecuencia === b.frecuencia) {
         if (a.id < b.id) return -1;
         if (a.id > b.id) return 1;
@@ -68,3 +71,46 @@ console.log("Texto vacío (esperado: raiz null, pasos []):", arbolVacio.raiz, ar
 const arbolUno = construirArbol(contarFrecuencias("aaaa"));
 console.log("Un solo carácter (esperado: 1 paso de tipo hoja, raíz 'a'):",
     arbolUno.pasos.length, arbolUno.pasos[0].tipo, arbolUno.raiz.simbolo);
+
+console.log("\n=== Prueba 8: generar códigos con 'abracadabra' (DoD) ===");
+const mapaAbra = generarCodigos(arbolAbra.raiz);
+const tablaAbra = tablaCodigos(resultadoAbra, mapaAbra);
+console.table(tablaAbra);
+
+const respuestaCodigos = await fetch('../ejemplos/abracadabra-codigos.json');
+const codigosContrato = await respuestaCodigos.json();
+console.log("¿Códigos idénticos al ejemplo del contrato? (esperado: true):",
+    JSON.stringify(tablaAbra) === JSON.stringify(codigosContrato));
+
+console.log("\n=== Prueba 9: bits totales ===");
+let bitsTotales = 0;
+for (const fila of tablaAbra) bitsTotales += fila.frecuencia * fila.codigo.length;
+console.log("Bits totales (esperado: 23):", bitsTotales);
+
+console.log("\n=== Prueba 10: ningún código es prefijo de otro (DoD) ===");
+let hayPrefijo = false;
+for (const x of tablaAbra) {
+    for (const y of tablaAbra) {
+        if (x !== y && y.codigo.startsWith(x.codigo)) hayPrefijo = true;
+    }
+}
+console.log("¿Hay algún código prefijo de otro? (esperado: false):", hayPrefijo);
+
+console.log("\n=== Prueba 11: casos borde de códigos ===");
+console.log("Texto vacío (esperado: 0):", generarCodigos(arbolVacio.raiz).size);
+console.log("Un solo carácter 'aaaa' (esperado: '0'):", generarCodigos(arbolUno.raiz).get(97));
+
+console.log("\n=== Prueba 12: comprimir (primera versión) ===");
+const respuestaResumen = await fetch('../ejemplos/abracadabra-resultado.json');
+const resumenEjemplo = await respuestaResumen.json();
+const resultadoComprimir = comprimir("abracadabra", resumenEjemplo.metadatos);
+
+console.log("¿frecuencias iguales al ejemplo? (esperado: true):",
+    JSON.stringify(resultadoComprimir.frecuencias) === JSON.stringify(resumenEjemplo.frecuencias));
+console.log("¿pasos iguales al ejemplo? (esperado: true):",
+    JSON.stringify(resultadoComprimir.pasos) === JSON.stringify(resumenEjemplo.pasos));
+console.log("¿códigos iguales al ejemplo? (esperado: true):",
+    JSON.stringify(resultadoComprimir.codigos) === JSON.stringify(resumenEjemplo.codigos));
+console.log("¿texto y metadatos iguales? (esperado: true):",
+    resultadoComprimir.texto === resumenEjemplo.texto &&
+    JSON.stringify(resultadoComprimir.metadatos) === JSON.stringify(resumenEjemplo.metadatos));

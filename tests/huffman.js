@@ -1,3 +1,4 @@
+import { escribirHfmn } from '../js/huffman/formatoHfmn.js';
 import { codificar } from '../js/huffman/codificador.js';
 import { generarCodigos, tablaCodigos } from '../js/huffman/codigos.js';
 import { comprimir } from '../js/huffman/comprimirHuffman.js';
@@ -148,3 +149,35 @@ const codificadoEspecial = codificar(textoEspecial, generarCodigos(arbolEspecial
 console.log("¿Bytes y relleno cuadran con los bits? (esperado: true):",
     codificadoEspecial.datos.length * 8 ===
     codificadoEspecial.totalBits + codificadoEspecial.bitsRelleno);
+
+console.log("\n=== Prueba 17: escribirHfmn con 'abracadabra' (DoD) ===");
+const hfmnMio = escribirHfmn({
+    metadatos: resumenEjemplo.metadatos,
+    frecuencias: resultadoAbra,
+    totalCaracteres: [..."abracadabra"].length,
+    datos: codificado.datos,
+    bitsRelleno: codificado.bitsRelleno
+});
+
+console.log("Tamaño (esperado: 134):", hfmnMio.length);
+console.log("¿Idéntico byte a byte al .hfmn del contrato? (esperado: true):",
+    aHex(hfmnMio) === aHex(bytesHfmn));
+
+console.log("\n=== Prueba 18: cabecera ===");
+console.log("Firma (esperado: 48 46 4D 4E):", aHex(hfmnMio.slice(0, 4)));
+console.log("Versión y relleno (esperado: 01 01):", aHex(hfmnMio.slice(4, 6)));
+console.log("Longitud de metadatos (esperado: 4B 00):", aHex(hfmnMio.slice(6, 8)));
+
+console.log("\n=== Prueba 19: casos borde ===");
+const hfmnVacio = escribirHfmn({
+    metadatos: {}, frecuencias: [], totalCaracteres: 0,
+    datos: new Uint8Array(0), bitsRelleno: 0
+});
+console.log("Texto vacío (esperado: 18 bytes):", hfmnVacio.length);
+
+const hfmnUno = escribirHfmn({
+    metadatos: {}, frecuencias: [{ codePoint: 97, simbolo: 'a', frecuencia: 4 }],
+    totalCaracteres: 4, datos: unoCodificado.datos, bitsRelleno: unoCodificado.bitsRelleno
+});
+console.log("'aaaa' (esperado: 27 bytes, termina en 00):",
+    hfmnUno.length, aHex(hfmnUno.slice(-1)));

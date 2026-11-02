@@ -1,4 +1,4 @@
-import { escribirHfmn } from '../js/huffman/formatoHfmn.js';
+import { escribirHfmn, leerHfmn } from '../js/huffman/formatoHfmn.js';
 import { codificar } from '../js/huffman/codificador.js';
 import { generarCodigos, tablaCodigos } from '../js/huffman/codigos.js';
 import { comprimir } from '../js/huffman/comprimirHuffman.js';
@@ -181,3 +181,45 @@ const hfmnUno = escribirHfmn({
 });
 console.log("'aaaa' (esperado: 27 bytes, termina en 00):",
     hfmnUno.length, aHex(hfmnUno.slice(-1)));
+
+console.log("\n=== Prueba 20: leerHfmn con abracadabra.hfmn (DoD) ===");
+const leido = leerHfmn(bytesHfmn);
+console.table(leido.zonas);
+
+console.log("¿Zonas idénticas al ejemplo? (esperado: true):",
+    JSON.stringify(leido.zonas) === JSON.stringify(resumenEjemplo.zonas));
+console.log("¿Frecuencias idénticas? (esperado: true):",
+    JSON.stringify(leido.frecuencias) === JSON.stringify(resumenEjemplo.frecuencias));
+console.log("¿Metadatos idénticos? (esperado: true):",
+    JSON.stringify(leido.metadatos) === JSON.stringify(resumenEjemplo.metadatos));
+console.log("Total de caracteres (esperado: 11):", leido.totalCaracteres);
+console.log("Bits de relleno (esperado: 1):", leido.bitsRelleno);
+console.log("Datos (esperado: 6E 8A DC):", aHex(leido.datos));
+
+console.log("\n=== Prueba 21: escribir y leer de vuelta ===");
+const ida = leerHfmn(hfmnMio);
+console.log("¿Lo que escribo es lo que leo? (esperado: true):",
+    JSON.stringify(ida.frecuencias) === JSON.stringify(resultadoAbra) &&
+    aHex(ida.datos) === aHex(codificado.datos));
+
+console.log("\n=== Prueba 22: archivos alterados lanzan error en español ===");
+function probarAlterado(descripcion, alterar) {
+    const copia = bytesHfmn.slice();
+    alterar(copia);
+    try {
+        leerHfmn(copia);
+        console.log(descripcion, "-> NO lanzó error (esto está mal)");
+    } catch (error) {
+        console.log(descripcion, "->", error.message);
+    }
+}
+
+probarAlterado("Firma cambiada", b => { b[0] = 0x58; });
+probarAlterado("Versión 2", b => { b[4] = 2; });
+probarAlterado("Relleno 9", b => { b[5] = 9; });
+probarAlterado("Metadatos gigantes", b => { b[6] = 0xFF; b[7] = 0xFF; });
+probarAlterado("JSON roto", b => { b[8] = 0x7E; });
+probarAlterado("Frecuencia alterada", b => { b[95] = 9; });
+
+try { leerHfmn(bytesHfmn.slice(0, 10)); } catch (e) { console.log("Archivo corto ->", e.message); }
+try { leerHfmn(bytesHfmn.slice(0, 100)); } catch (e) { console.log("Archivo truncado ->", e.message); }

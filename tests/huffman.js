@@ -1,7 +1,7 @@
+import { codificar, decodificar } from '../js/huffman/codificador.js';
+import { comprimir, descomprimir } from '../js/huffman/comprimirHuffman.js';
 import { escribirHfmn, leerHfmn } from '../js/huffman/formatoHfmn.js';
-import { codificar } from '../js/huffman/codificador.js';
 import { generarCodigos, tablaCodigos } from '../js/huffman/codigos.js';
-import { comprimir } from '../js/huffman/comprimirHuffman.js';
 import { construirArbol } from '../js/huffman/arbol.js';
 import { ColaPrioridad } from '../js/huffman/colaPrioridad.js';
 import { contarFrecuencias } from '../js/huffman/frecuencias.js';
@@ -223,3 +223,51 @@ probarAlterado("Frecuencia alterada", b => { b[95] = 9; });
 
 try { leerHfmn(bytesHfmn.slice(0, 10)); } catch (e) { console.log("Archivo corto ->", e.message); }
 try { leerHfmn(bytesHfmn.slice(0, 100)); } catch (e) { console.log("Archivo truncado ->", e.message); }
+
+console.log("\n=== Prueba 23: decodificar 'abracadabra' ===");
+const textoDecodificado = decodificar(codificado.datos, arbolAbra.raiz, 11);
+console.log("Texto recuperado (esperado: abracadabra):", textoDecodificado);
+
+console.log("\n=== Prueba 24: comprimir completo (DoD) ===");
+const completo = comprimir("abracadabra", resumenEjemplo.metadatos);
+console.log("¿bytesHfmn idénticos al .hfmn del contrato? (esperado: true):",
+    aHex(completo.bytesHfmn) === aHex(bytesHfmn));
+
+const camposResultado = ['texto', 'metadatos', 'frecuencias', 'pasos', 'codigos',
+    'bitsRelleno', 'totalBits', 'zonas', 'tamanos'];
+for (const campo of camposResultado) {
+    console.log(`comprimir.${campo} igual al ejemplo (esperado: true):`,
+        JSON.stringify(completo[campo]) === JSON.stringify(resumenEjemplo[campo]));
+}
+
+console.log("\n=== Prueba 25: descomprimir el .hfmn del contrato ===");
+const recuperado = descomprimir(bytesHfmn);
+console.log("Texto (esperado: abracadabra):", recuperado.texto);
+for (const campo of camposResultado) {
+    console.log(`descomprimir.${campo} igual al ejemplo (esperado: true):`,
+        JSON.stringify(recuperado[campo]) === JSON.stringify(resumenEjemplo[campo]));
+}
+
+console.log("\n=== Prueba 26: descomprimir(comprimir(t)).texto === t (DoD) ===");
+const textosPrueba = [
+    "abracadabra",
+    "año 🚀",
+    "en un lugar de la mancha ñandú 🚀",
+    "línea 1\r\nlínea 2\nlínea 3",
+    "aaaa",
+    "a",
+    ""
+];
+for (const t of textosPrueba) {
+    const idaYVuelta = descomprimir(comprimir(t).bytesHfmn).texto;
+    console.log(JSON.stringify(t), "->", idaYVuelta === t);
+}
+
+console.log("\n=== Prueba 27: archivo con datos incompletos ===");
+const largo = comprimir("en un lugar de la mancha de cuyo nombre no quiero acordarme");
+try {
+    descomprimir(largo.bytesHfmn.slice(0, largo.bytesHfmn.length - 3));
+    console.log("NO lanzó error (esto está mal)");
+} catch (error) {
+    console.log("Error (esperado: datos incompletos):", error.message);
+}

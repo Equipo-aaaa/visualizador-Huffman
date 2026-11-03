@@ -1,0 +1,27 @@
+/* Estilos de js/visualizador/lectorTexto.js. Clases con prefijo "lectorTexto-". */
+
+.lectorTexto-pagina {
+  margin: 0;
+  padding: 1rem;
+  max-height: 26rem;
+  overflow: auto;
+  white-space: pre-wrap;       
+  overflow-wrap: anywhere;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.88);
+  background: var(--fondo, #111114);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.5rem;
+}
+
+.lectorTexto-pagina:focus-visible {
+  outline: 2px solid var(--primario, #06B6D4);
+  outline-offset: 2px;
+}
+
+.lectorTexto-vacio {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.6);
+}

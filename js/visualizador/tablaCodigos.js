@@ -133,3 +133,4 @@ export function montarTablaCodigos(contenedor, codigos) {
 
   return { destruir: () => contenedor.replaceChildren() };
 }
+}

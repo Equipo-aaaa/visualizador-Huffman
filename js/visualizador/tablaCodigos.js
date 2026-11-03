@@ -1,4 +1,9 @@
-// AN-01 · Tabla de frecuencias y códigos.
+// AN-01 · Tabla de frecuencias y códigos. Jose Andres Flores Parra
+// Recibe `resultado.codigos`y lo dibuja dentro del contenedor.
+// No importa nada de js/huffman/: solo trabaja con los datos que le pasan.
+
+// Estos caracteres no se ven en pantalla, así que se muestran con un símbolo.
+// Es como usar repr() en Python: repr(' ') muestra "' '" en vez de nada.
 const SIMBOLOS_VISIBLES = {
   ' ': '␣',
   '\n': '↵',
@@ -6,8 +11,10 @@ const SIMBOLOS_VISIBLES = {
   '\t': '⇥',
 };
 
+// Devuelve el texto que se muestra para un carácter.
 export function simboloVisible(simbolo) {
   if (simbolo in SIMBOLOS_VISIBLES) return SIMBOLOS_VISIBLES[simbolo];
+  // Caracteres de control (código < 32) o el espacio duro: se muestran como U+XXXX.
   const codePoint = simbolo.codePointAt(0);
   if (codePoint < 32 || codePoint === 0x7f || codePoint === 0xa0) {
     return 'U+' + codePoint.toString(16).toUpperCase().padStart(4, '0');
@@ -15,6 +22,7 @@ export function simboloVisible(simbolo) {
   return simbolo;
 }
 
+// Columnas de la tabla. 
 const COLUMNAS = [
   { clave: 'simbolo', titulo: 'Carácter', valor: (f) => f.codePoint },
   { clave: 'frecuencia', titulo: 'Frecuencia', valor: (f) => f.frecuencia },
@@ -23,6 +31,7 @@ const COLUMNAS = [
 ];
 
 export function montarTablaCodigos(contenedor, codigos) {
+  //vaciar el contenedor y dibujar solo dentro de él.
   contenedor.replaceChildren();
 
   if (!codigos || codigos.length === 0) {
@@ -45,6 +54,7 @@ export function montarTablaCodigos(contenedor, codigos) {
   tabla.append(encabezado, cuerpo);
   envoltura.append(tabla);
 
+  // Resumen debajo de la tabla: cuántos símbolos hay y el código más corto y largo.
   const pie = document.createElement('p');
   pie.className = 'tablaCodigos-pie';
   const longitudes = codigos.map((f) => f.codigo.length);
@@ -64,6 +74,7 @@ export function montarTablaCodigos(contenedor, codigos) {
       boton.textContent = columna.titulo + (activa ? (orden.ascendente ? ' ▲' : ' ▼') : '');
       celda.setAttribute('aria-sort', activa ? (orden.ascendente ? 'ascending' : 'descending') : 'none');
       boton.addEventListener('click', () => {
+        // Un segundo clic en la misma columna invierte el orden.
         orden = { clave: columna.clave, ascendente: activa ? !orden.ascendente : true };
         dibujar();
       });
@@ -79,6 +90,7 @@ export function montarTablaCodigos(contenedor, codigos) {
     filas.sort((a, b) => {
       const va = columna.valor(a);
       const vb = columna.valor(b);
+      // Si hay empate se usa el codePoint, para que el orden sea siempre estable.
       const diferencia = va < vb ? -1 : va > vb ? 1 : a.codePoint - b.codePoint;
       return diferencia * signo;
     });
@@ -120,4 +132,5 @@ export function montarTablaCodigos(contenedor, codigos) {
   contenedor.append(envoltura, pie);
 
   return { destruir: () => contenedor.replaceChildren() };
+}
 }

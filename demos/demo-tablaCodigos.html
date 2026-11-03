@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es" data-bs-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Demo · Tabla de códigos</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=JetBrains+Mono&display=swap" rel="stylesheet">
+  <link href="../css/estilos.css" rel="stylesheet">
+  <link href="../css/modulos/tablaCodigos.css" rel="stylesheet">
+</head>
+<body>
+  <main class="container py-4">
+    <h1 class="h4 mb-3">Demo · montarTablaCodigos</h1>
+    <div class="btn-group mb-3" role="group" aria-label="Datos de prueba">
+      <button class="btn btn-outline-info" id="ejemplo">abracadabra</button>
+      <button class="btn btn-outline-info" id="especiales">Espacio, salto y emoji</button>
+      <button class="btn btn-outline-info" id="vacio">Texto vacío</button>
+    </div>
+    <div id="tabla-codigos"></div>
+  </main>
+
+  <script type="module">
+    import { montarTablaCodigos } from '../js/visualizador/tablaCodigos.js';
+    const contenedor = document.getElementById('tabla-codigos');
+
+    // ejemplo del contrato.
+    async function mostrarEjemplo() {
+      const respuesta = await fetch('../ejemplos/abracadabra-codigos.json');
+      montarTablaCodigos(contenedor, await respuesta.json());
+    }
+
+    // Caso para probar los símbolos visibles.
+    function mostrarEspeciales() {
+      montarTablaCodigos(contenedor, [
+        { simbolo: '\n', codePoint: 10, frecuencia: 40, codigo: '10' },
+        { simbolo: ' ', codePoint: 32, frecuencia: 120, codigo: '0' },
+        { simbolo: 'ñ', codePoint: 241, frecuencia: 7, codigo: '1101' },
+        { simbolo: '😀', codePoint: 128512, frecuencia: 1, codigo: '1100' },
+        { simbolo: 'e', codePoint: 101, frecuencia: 60, codigo: '111' },
+      ]);
+    }
+
+    document.getElementById('ejemplo').onclick = mostrarEjemplo;
+    document.getElementById('especiales').onclick = mostrarEspeciales;
+    document.getElementById('vacio').onclick = () => montarTablaCodigos(contenedor, []);
+    mostrarEjemplo();
+  </script>
+</body>
+</html>

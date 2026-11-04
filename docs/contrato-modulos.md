@@ -9,7 +9,7 @@ Regla general: **no se cambia una firma sin avisar al equipo.** Si hace falta, s
 ```
 pagina-principal.js (Diego) ── usa ──► gutenberg/buscador.js (Daniel)
         │                                   └─► gutenberg/cliente.js ──► /api/buscar, /api/libro (Daniel)
-        ├── usa ──► trabajador.js (Diego) ──► huffman/huffman.js (Brayan)
+        ├── usa ──► trabajador.js (Diego) ──► huffman/comprimirHuffman.js (Brayan)
         ├── usa ──► visualizador/*.js (Andrés)   ← solo reciben datos, no importan huffman
         └── usa ──► interfaz/*.js (Diego)
 ```
@@ -52,8 +52,8 @@ JavaScript puro: **sin DOM** (`document`, `window`), para que corra en el Web Wo
 | `codificador.js` | `decodificar(datos, raiz, totalCaracteres)` | bytes + raíz + total | string |
 | `formatoHfmn.js` | `escribirHfmn({ metadatos, frecuencias, totalCaracteres, datos, bitsRelleno })` | objeto | `Uint8Array` |
 | `formatoHfmn.js` | `leerHfmn(bytes)` | `Uint8Array` | `{ version, metadatos, frecuencias, totalCaracteres, bitsRelleno, datos, zonas }` |
-| `huffman.js` | `comprimir(texto, metadatos = {})` | string + objeto | `ResultadoHuffman` |
-| `huffman.js` | `descomprimir(bytesHfmn)` | `Uint8Array` | `ResultadoHuffman` |
+| `comprimirHuffman.js` | `comprimir(texto, metadatos = {})` | string + objeto | `ResultadoHuffman` |
+| `comprimirHuffman.js` | `descomprimir(bytesHfmn)` | `Uint8Array` | `ResultadoHuffman` |
 
 Detalles:
 
@@ -61,7 +61,7 @@ Detalles:
 - **Comparador de la cola:** `(a, b) => a.frecuencia - b.frecuencia || a.id - b.id` (regla de desempate).
 - **Caracteres:** se recorre con `for (const c of texto)`, no con `texto[i]`, para que un emoji cuente como un carácter. No se normalizan saltos de línea: `\r\n` son dos caracteres.
 - **Errores:** `leerHfmn` y `descomprimir` lanzan `Error` con mensaje en español (ver validaciones en `formato-hfmn.md`).
-- Solo `huffman.js` se usa fuera de esta carpeta. Los demás archivos son internos.
+- Solo `comprimirHuffman.js` se usa fuera de esta carpeta. Los demás archivos son internos.
 
 ## Gutenberg — Daniel
 

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es" data-bs-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Comparador de Algoritmos - VisuAlgoritmos</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="css/estilos.css" rel="stylesheet">
+
+  <!-- Chart.js: crea la variable global `Chart` que usa pagina-comparador.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+  <!-- ===================== Encabezado ===================== -->
+  <header class="encabezado">
+    <a class="marca" href="index.html">
+      <i class="bi bi-bar-chart-steps me-1"></i>VisuAlgoritmos<br>
+      <small>Análisis de Algoritmos</small>
+    </a>
+
+    <div class="d-flex gap-2 align-items-center">
+      <img src="img/escudo-cucei.webp" alt="Logo CUCEI" class="logo-universidad">
+      <!-- Botón hamburguesa: solo en móvil, abre el panel lateral -->
+      <button class="btn btn-neutro d-md-none" type="button"
+              data-bs-toggle="offcanvas" data-bs-target="#panelLateral" aria-controls="panelLateral" aria-label="Abrir menú">
+        <i class="bi bi-list fs-4"></i>
+      </button>
+    </div>
+
+  </header>
+
+  <!-- ===================== Tarjeta central ===================== -->
+  <div class="marco">
+    <div class="row g-0 h-100">
+
+      <!-- ===== Panel lateral ===== -->
+      <aside class="col-md-3 lateral offcanvas-md offcanvas-start" tabindex="-1" id="panelLateral" aria-labelledby="tituloLateral">
+
+        <div class="offcanvas-header">
+          <h5 class="offcanvas-title fw-bold" id="tituloLateral">VisuAlgoritmos</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#panelLateral" aria-label="Cerrar"></button>
+        </div>
+
+        <div class="lateral-cuerpo">
+          <h2 class="lateral-titulo d-none d-md-block">Comparador de Algoritmos</h2>
+
+          <nav class="navegacion">
+            <a href="index.html" class="btn-pagina pagina-visualizador">
+              <i class="bi bi-bar-chart-line-fill"></i>Visualizador
+            </a>
+            <a href="comparador.html" class="btn-pagina pagina-comparador activo" aria-current="page">
+              <i class="bi bi-graph-up"></i>Comparador
+            </a>
+            <a href="huffman.html" class="btn-pagina pagina-huffman">
+              <i class="bi bi-diagram-3-fill"></i>Huffman
+            </a>
+          </nav>
+
+          <div class="lateral-controles">
+
+            <!-- Generador de rangos -->
+            <section class="panel mb-3">
+              <h2 class="titulo-panel">Generador de rangos (N)</h2>
+
+              <div class="row g-2">
+                <div class="col-4">
+                  <label for="inicio" class="form-label small text-secondary mb-1">Inicio</label>
+                  <input id="inicio" type="number" class="form-control" value="200" min="1">
+                </div>
+                <div class="col-4">
+                  <label for="paso" class="form-label small text-secondary mb-1">Paso</label>
+                  <input id="paso" type="number" class="form-control" value="200" min="1">
+                </div>
+                <div class="col-4">
+                  <label for="fin" class="form-label small text-secondary mb-1">Fin</label>
+                  <input id="fin" type="number" class="form-control" value="1000" min="1">
+                </div>
+              </div>
+
+              <!-- Vista previa de los tamaños que se van a generar -->
+              <div class="small text-secondary mt-3 mb-1">Arreglos a generar: <span id="numPuntos" class="mono texto-acento">0</span></div>
+              <div id="chips"></div>
+              <div id="error" class="text-danger small mt-1"></div>
+
+              <button id="btnEjecutar" class="btn btn-generar w-75 mt-3 d-block mx-auto">
+                Generar y medir
+              </button>
+              <div class="progress mt-2 d-none" id="contenedorProgreso" style="height:6px">
+                <div id="barraProgreso" class="progress-bar" style="width:0%; background:var(--primario)"></div>
+              </div>
+            </section>
+
+            <!-- Líneas de algoritmos (se llena desde JS) -->
+            <section class="panel">
+              <h2 class="titulo-panel d-flex justify-content-between">
+                <span>Líneas</span>
+                <span id="numActivos" class="text-secondary"></span>
+              </h2>
+              <p class="small text-secondary">Activa o desactiva líneas; el eje Y se reescala solo.</p>
+              <div id="listaLineas" class="lista-scroll"></div>
+            </section>
+          </div>
+        </div>
+      </aside>
+
+      <!-- ===== Contenido ===== -->
+      <main class="col-md-9 contenido">
+
+        <!-- Títulos: pagina-comparador.js los cambia según la métrica -->
+        <div class="mb-3">
+          <h1 id="tituloMetrica" class="titulo-pagina">Tiempo de ejecución vs. tamaño (N)</h1>
+          <p id="subtituloMetrica" class="subtitulo-pagina">Cada punto es el tiempo promedio de varias ejecuciones sobre el mismo arreglo.</p>
+        </div>
+
+        <!-- Métrica a graficar. Cambiarla NO vuelve a medir: usa los últimos datos. -->
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+          <div class="btn-group" role="group" aria-label="Métrica">
+            <input type="radio" class="btn-check" name="metrica" id="metTiempo" value="tiempo" checked>
+            <label class="btn btn-metrica met-tiempo btn-sm" for="metTiempo"></i>Tiempo</label>
+            <input type="radio" class="btn-check" name="metrica" id="metComparaciones" value="comparaciones">
+            <label class="btn btn-metrica met-comparaciones btn-sm" for="metComparaciones"></i>Comparaciones</label>
+            <input type="radio" class="btn-check" name="metrica" id="metIntercambios" value="intercambios">
+            <label class="btn btn-metrica met-intercambios btn-sm" for="metIntercambios"></i>Intercambios</label>
+            <input type="radio" class="btn-check" name="metrica" id="metEscrituras" value="escrituras">
+            <label class="btn btn-metrica met-escrituras btn-sm" for="metEscrituras"></i>Escrituras</label>
+          </div>
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" role="switch" id="escalaLog">
+            <label class="form-check-label small" for="escalaLog">Escala logarítmica</label>
+          </div>
+        </div>
+
+        <div class="panel mb-3">
+          <div class="contenedor-grafica">
+            <canvas id="grafica"></canvas>
+            <p id="sinDatos" class="position-absolute top-50 start-50 translate-middle text-secondary text-center">
+              Configura el rango y presiona <strong>Generar y medir</strong>.
+            </p>
+          </div>
+        </div>
+
+        <!-- Tabla con los números exactos -->
+        <div class="panel">
+          <h2 id="tituloTabla" class="titulo-panel">Resultados (tiempo)</h2>
+          <div class="table-responsive">
+            <table class="table table-sm tabla-resultados mb-0">
+              <thead id="tablaCabecera"></thead>
+              <tbody id="tablaCuerpo">
+                <tr><td class="text-secondary">Sin resultados todavía</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script type="module" src="js/comparador/pagina-comparador.js"></script>
+</body>
+</html>

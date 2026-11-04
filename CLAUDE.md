@@ -4,13 +4,14 @@ Este archivo describe el proyecto para que el Claude de cada integrante trabaje 
 
 ## Qué es
 
-Página web que **visualiza el algoritmo de Huffman** (técnica voraz) comprimiendo libros de Project Gutenberg. Es una actividad de Análisis de Algoritmos (CUCEI, UdeG, 2026B) hecha por un equipo de 4. El proyecto anterior del mismo equipo fue VisuAlgoritmos (visualizador de ordenamientos); este repite su forma de trabajo y su diseño, pero vive en **su propio repositorio**.
+Sitio web con **tres páginas**: Visualizador y Comparador de ordenamientos, que vienen de VisuAlgoritmos, y **Huffman**, que visualiza ese algoritmo (técnica voraz) comprimiendo libros de Project Gutenberg. Es una actividad de Análisis de Algoritmos (CUCEI, UdeG, 2026B) hecha por un equipo de 4.
 
-Objetivo de la actividad: calcular frecuencias de caracteres, construir el árbol de Huffman con la técnica voraz, generar los códigos, codificar y decodificar, y comparar el tamaño original contra el comprimido.
+Objetivo de la actividad de Huffman: calcular frecuencias de caracteres, construir el árbol de Huffman con la técnica voraz, generar los códigos, codificar y decodificar, y comparar el tamaño original contra el comprimido.
 
 ## Repositorio y calendario
 
-- Repositorio: `Equipo-aaaa/VisualizadorHuffman`, independiente de `VisualizadorOrdenamientos`. No se copia ni se modifica nada del repo de ordenamientos; del diseño solo se copian los estilos.
+- Repositorio: `Equipo-aaaa/VisualizadorHuffman`. Contiene todo el sitio, incluidas las páginas y el código de VisuAlgoritmos.
+- `VisualizadorOrdenamientos` queda como el repositorio de la entrega anterior: no se sigue trabajando ahí.
 - Tablero: "Huffman" en GitHub Projects, con una issue por tarea del backlog.
 
 La entrega es el **lunes 2 de noviembre de 2026**; el trabajo termina el domingo 1.
@@ -23,7 +24,11 @@ La entrega es el **lunes 2 de noviembre de 2026**; el trabajo termina el domingo
 
 Las tareas se identifican con las iniciales del responsable y un número: `DI` Diego, `DA` Daniel, `BR` Brayan, `AN` Andrés y `TO` todos (por ejemplo, `BR-03`). El número sigue el orden de trabajo de cada integrante, pero lo que manda es la fecha de cada issue y su "Depende de": una tarea no se empieza hasta que las que necesita estén en `main`.
 
-## Qué hace la página
+## Qué hace el sitio
+
+Las tres páginas comparten encabezado, diseño y un menú con tres botones: Visualizador (`index.html`), Comparador (`comparador.html`) y Huffman (`huffman.html`).
+
+`huffman.html` organiza su contenido en tres pestañas:
 
 1. **Elegir texto:** buscar un libro en Gutenberg o subir un `.txt` propio.
 2. **Compresión:**
@@ -39,12 +44,13 @@ Las tareas se identifican con las iniciales del responsable y un número: `DI` D
 ## Decisiones tomadas (no cambiar sin acuerdo del equipo)
 
 - **Stack:** HTML, CSS y JavaScript con módulos ES (`import`/`export`), **sin frameworks**. Bootstrap 5.3.3 y Bootstrap Icons por CDN. Para el árbol se recomienda D3 v7 por CDN o SVG a mano.
-- **Diseño:** el mismo de VisuAlgoritmos, copiando su `css/estilos.css` a este repositorio.
+- **Diseño:** el mismo de VisuAlgoritmos, compartido en `css/estilos.css`.
   - Modo oscuro fijo con `data-bs-theme="dark"`.
   - Paleta en variables CSS: `--primario` #06B6D4, `--secundario` #6366F1, `--terciario` #10B981, `--fondo` #111114, `--superficie` #1A1A1F, más ámbar #F59E0B y rosa #F43F5E para resaltar.
   - Tipografías Inter y JetBrains Mono.
   - Tarjeta central `.marco` y logo del CUCEI.
-- **Hosting:** un sitio nuevo en Netlify, conectado a este repositorio para que publique solo con cada merge a `main`. El sitio es estático más **dos Netlify Functions** (`/api/buscar`, `/api/libro`), que existen porque gutenberg.org no deja descargar sus `.txt` desde otra página (CORS). Todo el algoritmo corre en el navegador.
+  - Los estilos de la página `huffman.html` van en la sección "Página 3: Huffman" de `css/estilos.css`; los de cada módulo, en `css/modulos/`.
+- **Hosting:** un sitio en Netlify, conectado a este repositorio para que publique solo con cada merge a `main`. El sitio es estático más **dos Netlify Functions** (`/api/buscar`, `/api/libro`), que existen porque gutenberg.org no deja descargar sus `.txt` desde otra página (CORS). Todo el algoritmo corre en el navegador.
 - **Archivo comprimido:** extensión propia `.hfmn`. Lleva la tabla de frecuencias dentro, así que se descomprime solo. Formato en `docs/formato-hfmn.md`.
 - **Unidad:** carácter Unicode (`for…of`). El tamaño original se mide en bytes UTF-8.
 
@@ -59,7 +65,7 @@ Los contratos son acuerdos sobre qué datos se pasan entre partes. Son como el e
 | `docs/guia-del-equipo.md` | Resumen para personas: qué se construye, cómo funciona Huffman, qué dice cada contrato y qué leer según tu parte |
 | `docs/contrato-pasos-arbol.md` | Lista de pasos (`hoja` / `fusion`) que produce el algoritmo y consume la animación; **regla de desempate** |
 | `docs/formato-hfmn.md` | Orden de bytes del `.hfmn`, validaciones, zonas y cómo medir tamaños |
-| `docs/contrato-modulos.md` | Firma de cada función exportada, objeto `ResultadoHuffman`, API HTTP, mensajes del worker y contenedores del HTML |
+| `docs/contrato-modulos.md` | Firma de cada función exportada, objeto `ResultadoHuffman`, API HTTP, mensajes del worker y contenedores de `huffman.html` |
 
 Datos de ejemplo hechos con la regla de desempate (para probar sin depender de otros): `ejemplos/abracadabra.txt`, `abracadabra-pasos.json`, `abracadabra-codigos.json`, `abracadabra-resultado.json` y `abracadabra.hfmn`.
 
@@ -67,37 +73,42 @@ Datos de ejemplo hechos con la regla de desempate (para probar sin depender de o
 
 ```
 VisualizadorHuffman/
-├── index.html                    Página única (Diego)
+├── index.html                    Visualizador de ordenamientos
+├── comparador.html               Comparador de ordenamientos
+├── huffman.html                  Página de Huffman (Diego)
 ├── netlify.toml                  Publica la raíz y redirige /api/* (Daniel)
 ├── CLAUDE.md · README.md
-├── css/estilos.css               Paleta y estilos compartidos (copiados de VisuAlgoritmos)
+├── css/estilos.css               Paleta y estilos compartidos por las tres páginas
 ├── css/modulos/                  Un CSS por módulo, para no editar el mismo archivo
 ├── img/escudo-cucei.webp
 ├── docs/                         Contratos y guía del equipo
 ├── ejemplos/                     Datos de ejemplo
 ├── netlify/functions/            buscar.mjs, libro.mjs (Daniel)
 ├── js/
-│   ├── pagina-principal.js       Orquesta el flujo (Diego)
+│   ├── pagina-principal.js       Orquesta el flujo de huffman.html (Diego)
 │   ├── trabajador.js             Web Worker (Diego)
-│   ├── core/utilidades.js        Formatos de bytes y porcentajes, helpers compartidos
+│   ├── algoritmos/               Ordenamientos y catalogo.js (VisuAlgoritmos)
+│   ├── comparador/               benchmark.js, pagina-comparador.js (VisuAlgoritmos)
+│   ├── core/                     eventos.js, utilidades.js (compartidos)
 │   ├── huffman/                  Algoritmo puro, sin DOM (Brayan)
 │   ├── gutenberg/                cliente.js, buscador.js (Daniel)
-│   ├── visualizador/             arbolAnimado, tablaCodigos, lectorTexto, lectorHfmn (Andrés)
+│   ├── visualizador/             Huffman: arbolAnimado, tablaCodigos, lectorTexto, lectorHfmn, paginador (Andrés)
+│   │                             VisuAlgoritmos: barras, reproductor, pagina-visualizador
 │   └── interfaz/                 resumen.js, descompresion.js (Diego)
 ├── demos/                        Una página de prueba por módulo
-└── tests/                        pruebas-huffman.js (Node y navegador), prueba-huffman.html
+└── tests/                        Pruebas de Huffman y de VisuAlgoritmos
 ```
 
 ## Reparto
 
 | Integrante | Capa | Carpetas |
 | --- | --- | --- |
-| Diego Antonio Espinosa Salinas | Contratos, página, flujo de la app, resumen, descompresión e integración continua | `index.html`, `js/pagina-principal.js`, `js/trabajador.js`, `js/interfaz/`, `docs/` |
+| Diego Antonio Espinosa Salinas | Contratos, página, flujo de la app, resumen, descompresión e integración continua | `huffman.html`, `js/pagina-principal.js`, `js/trabajador.js`, `js/interfaz/`, `docs/` |
 | Daniel Alejandro Rodríguez González | Repositorio, tablero, Netlify, funciones de Gutenberg, buscador y carga de `.txt`; revisa y aprueba PRs | `netlify/`, `netlify.toml`, `js/gutenberg/` |
 | Brayan Jaziel Navarro Ayala | Algoritmo de Huffman, formato `.hfmn` y pruebas | `js/huffman/`, `tests/` |
-| José Andrés Flores Parra | Animación del árbol, tabla de códigos y lectores | `js/visualizador/` |
+| José Andrés Flores Parra | Animación del árbol, tabla de códigos y lectores | Archivos de Huffman en `js/visualizador/` |
 
-Cada quien trabaja **solo en sus carpetas**. Si necesitas algo de otra capa, usa lo que fija el contrato o los datos de `ejemplos/`. No modifiques el código de otro.
+Cada quien trabaja **solo en sus carpetas**. Si necesitas algo de otra capa, usa lo que fija el contrato o los datos de `ejemplos/`. No modifiques el código de otro. El código de VisuAlgoritmos ya está entregado: solo se cambia si hace falta para integrar el sitio y avisando al equipo.
 
 ## Cómo trabajar (reglas del equipo)
 

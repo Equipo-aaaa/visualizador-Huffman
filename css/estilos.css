@@ -256,6 +256,35 @@ body {
 .pagina-visualizador { --color-pagina: var(--primario);   --color-pagina-texto: var(--acento-primario); }
 .pagina-comparador   { --color-pagina: var(--primario); --color-pagina-texto: var(--acento-primario); }
 
+/* ---------- Tercer mosaico de navegación ---------- */
+ 
+.pagina-huffman { --color-pagina: var(--primario); --color-pagina-texto: var(--acento-primario); }
+ 
+.navegacion { gap: .5rem; }
+ 
+.btn-pagina {
+  min-width: 0;
+  padding: .6rem .25rem;
+  font-size: .75rem;
+}
+ 
+.btn-pagina i { font-size: 1.5rem; }
+ 
+/* Con el panel angosto no caben tres mosaicos: se apilan en filas */
+@media (min-width: 768px) and (max-width: 1199.98px) {
+  .navegacion { flex-direction: column; }
+  .btn-pagina {
+    flex: none;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: .5rem;
+    padding: .35rem .75rem;
+    border-radius: 14px;
+    font-size: .8rem;
+  }
+  .btn-pagina i { font-size: 1.1rem; }
+}
+
 /* ---------- Paneles (tarjetas) ---------- */
 
 .panel {
@@ -548,3 +577,84 @@ body {
   font-family: var(--bs-font-monospace);
   font-size: .82rem;
 }
+
+/* =========================================================================
+   Página 3: Huffman
+   ========================================================================= */
+ 
+/* Pestañas de las tres secciones */
+.huffman-pestanas {
+  gap: .5rem;
+}
+ 
+.huffman-pestanas .nav-link {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  background: transparent;
+  border: 1px solid var(--borde);
+  border-radius: 20px;
+  color: var(--texto-suave);
+  font-size: .9rem;
+  font-weight: 500;
+  padding: .4rem .9rem .4rem .45rem;
+}
+ 
+.huffman-pestanas .nav-link:hover {
+  border-color: var(--primario);
+  color: var(--texto);
+}
+ 
+.huffman-pestanas .nav-link.active {
+  background: var(--primario);
+  border-color: var(--primario);
+  color: #0B0B0E;
+}
+ 
+.huffman-pestanas .numero {
+  width: 1.5rem;
+  height: 1.5rem;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--superficie-2);
+  color: var(--texto);
+  font-family: var(--bs-font-monospace);
+  font-size: .75rem;
+}
+ 
+/* Los contenedores siguen vacíos en el HTML, como pide el contrato. El aviso
+   lo dibuja CSS y desaparece solo cuando un módulo monta algo adentro. */
+.huffman-contenedor:empty::before {
+  content: attr(data-vacio);
+  display: block;
+  padding: 2rem 1rem;
+  border: 1px dashed var(--borde);
+  border-radius: 14px;
+  color: var(--texto-suave);
+  font-size: .85rem;
+  text-align: center;
+}
+ 
+/* Desplegable del árbol */
+.huffman-desplegable summary {
+  cursor: pointer;
+  margin-bottom: 0;
+}
+ 
+.huffman-desplegable[open] summary {
+  margin-bottom: .75rem;
+}
+ 
+/* Pasos del panel lateral */
+.huffman-pasos {
+  margin: 0;
+  padding-left: 1.1rem;
+  color: var(--texto-suave);
+  font-size: .85rem;
+}
+ 
+.huffman-pasos li + li {
+  margin-top: .5rem;
+}
+ 

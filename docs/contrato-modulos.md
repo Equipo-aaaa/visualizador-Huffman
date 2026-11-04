@@ -122,13 +122,13 @@ Errores de ambas: JSON `{ error: 'mensaje en español' }` con código:
 
 | Archivo | Exporta / hace |
 | --- | --- |
-| `index.html` | Esqueleto con el diseño de VisuAlgoritmos y un contenedor por sección (tabla abajo) |
+| `huffman.html` | Página de Huffman con el diseño de VisuAlgoritmos, tres pestañas y un contenedor por módulo (tabla abajo) |
 | `js/pagina-principal.js` | Orquesta todo: recibe el texto del buscador, comprime en el worker y monta cada vista |
 | `js/trabajador.js` | Web Worker que llama `comprimir` / `descomprimir` (mensajes abajo) |
 | `js/interfaz/resumen.js` | `montarResumen(contenedor, resultado)`: tamaños y botón de descarga del `.hfmn` |
 | `js/interfaz/descompresion.js` | `montarDescompresion(contenedor, { alCargarHfmn })`: botón para cargar un `.hfmn` |
 
-### Contenedores de `index.html`
+### Contenedores de `huffman.html`
 
 | Sección | Contenedor | Lo llena |
 | --- | --- | --- |

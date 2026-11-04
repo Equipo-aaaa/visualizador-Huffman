@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es" data-bs-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Compresión con Huffman - VisuAlgoritmos</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="css/estilos.css" rel="stylesheet">
+</head>
+<body>
+
+  <!-- ===================== Encabezado ===================== -->
+  <header class="encabezado">
+    <a class="marca" href="index.html">
+      <i class="bi bi-bar-chart-steps me-1"></i>VisuAlgoritmos<br>
+      <small>Análisis de Algoritmos</small>
+    </a>
+
+    <div class="d-flex gap-2 align-items-center">
+      <img src="img/escudo-cucei.webp" alt="Logo CUCEI" class="logo-universidad">
+      <button class="btn btn-neutro d-md-none" type="button"
+              data-bs-toggle="offcanvas" data-bs-target="#panelLateral" aria-controls="panelLateral" aria-label="Abrir menú">
+        <i class="bi bi-list fs-4"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- ===================== Tarjeta central ===================== -->
+  <div class="marco">
+    <div class="row g-0 h-100">
+
+      <!-- ===== Panel lateral ===== -->
+      <aside class="col-md-3 lateral offcanvas-md offcanvas-start" tabindex="-1" id="panelLateral" aria-labelledby="tituloLateral">
+
+        <div class="offcanvas-header">
+          <h5 class="offcanvas-title fw-bold" id="tituloLateral">VisuAlgoritmos</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#panelLateral" aria-label="Cerrar"></button>
+        </div>
+
+        <div class="lateral-cuerpo">
+          <h2 class="lateral-titulo d-none d-md-block">Compresión con Huffman</h2>
+
+          <nav class="navegacion">
+            <a href="index.html" class="btn-pagina pagina-visualizador">
+              <i class="bi bi-bar-chart-line-fill"></i>Visualizador
+            </a>
+            <a href="comparador.html" class="btn-pagina pagina-comparador">
+              <i class="bi bi-graph-up"></i>Comparador
+            </a>
+            <a href="huffman.html" class="btn-pagina pagina-huffman activo" aria-current="page">
+              <i class="bi bi-diagram-3-fill"></i>Huffman
+            </a>
+          </nav>
+
+          <div class="lateral-controles">
+            <section class="panel mb-3">
+              <h2 class="titulo-panel">Texto actual</h2>
+              <p id="textoActual" class="small text-secondary mb-0">Todavía no eliges un texto.</p>
+            </section>
+
+            <section class="panel">
+              <h2 class="titulo-panel">Cómo funciona</h2>
+              <ol class="huffman-pasos lista-scroll">
+                <li>Cuenta cuántas veces aparece cada carácter.</li>
+                <li>Une los dos nodos con menor frecuencia hasta formar el árbol.</li>
+                <li>Lee el código de cada carácter en el árbol.</li>
+                <li>Reemplaza el texto por esos códigos y guarda el <span class="mono">.hfmn</span>.</li>
+              </ol>
+            </section>
+          </div>
+        </div>
+      </aside>
+
+      <!-- ===== Contenido ===== -->
+      <main class="col-md-9 contenido">
+
+        <div class="mb-3">
+          <h1 class="titulo-pagina">Compresión de libros con Huffman</h1>
+          <p class="subtitulo-pagina">Elige un texto, comprímelo y mira cómo se construye su árbol.</p>
+        </div>
+
+        <!-- Pestañas: separan las tres secciones sin hacer una página enorme -->
+        <ul class="nav huffman-pestanas mb-3" id="pestanasHuffman" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="tab-elegir" type="button" role="tab"
+                    data-bs-toggle="tab" data-bs-target="#seccion-elegir" aria-controls="seccion-elegir" aria-selected="true">
+              <span class="numero">1</span>Elegir texto
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab-compresion" type="button" role="tab"
+                    data-bs-toggle="tab" data-bs-target="#seccion-compresion" aria-controls="seccion-compresion" aria-selected="false">
+              <span class="numero">2</span>Compresión
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab-lector" type="button" role="tab"
+                    data-bs-toggle="tab" data-bs-target="#seccion-lector" aria-controls="seccion-lector" aria-selected="false">
+              <span class="numero">3</span>Lector y descompresión
+            </button>
+          </li>
+        </ul>
+
+        <div class="tab-content">
+
+          <!-- Sección 1: Elegir texto -->
+          <section class="tab-pane fade show active" id="seccion-elegir" role="tabpanel" aria-labelledby="tab-elegir" tabindex="0">
+            <div class="panel">
+              <h2 class="titulo-panel">Buscar en Gutenberg o subir un .txt</h2>
+              <div id="buscador" class="huffman-contenedor" data-vacio="Aquí va el buscador de libros"></div>
+            </div>
+          </section>
+
+          <!-- Sección 2: Compresión -->
+          <section class="tab-pane fade" id="seccion-compresion" role="tabpanel" aria-labelledby="tab-compresion" tabindex="0">
+            <div class="panel mb-3">
+              <h2 class="titulo-panel">Resumen</h2>
+              <div id="resumen" class="huffman-contenedor" data-vacio="Aquí van los tamaños y la descarga del .hfmn"></div>
+            </div>
+
+            <details id="desplegable-arbol" class="panel huffman-desplegable mb-3">
+              <summary class="titulo-panel">Árbol de Huffman</summary>
+              <div id="arbol" class="huffman-contenedor" data-vacio="Aquí se anima la construcción del árbol"></div>
+            </details>
+
+            <div class="panel">
+              <h2 class="titulo-panel">Frecuencias y códigos</h2>
+              <div id="tabla-codigos" class="huffman-contenedor" data-vacio="Aquí va la tabla de códigos"></div>
+            </div>
+          </section>
+
+          <!-- Sección 3: Lector y descompresión -->
+          <section class="tab-pane fade" id="seccion-lector" role="tabpanel" aria-labelledby="tab-lector" tabindex="0">
+            <div class="panel mb-3">
+              <h2 class="titulo-panel">Cargar un archivo .hfmn</h2>
+              <div id="cargar-hfmn" class="huffman-contenedor" data-vacio="Aquí va el botón para cargar un .hfmn"></div>
+            </div>
+
+            <div class="row g-3">
+              <div class="col-xl-6">
+                <div class="panel h-100">
+                  <h2 class="titulo-panel">Texto</h2>
+                  <div id="lector-texto" class="huffman-contenedor" data-vacio="Aquí va el lector del texto"></div>
+                </div>
+              </div>
+              <div class="col-xl-6">
+                <div class="panel h-100">
+                  <h2 class="titulo-panel">Archivo .hfmn</h2>
+                  <div id="lector-hfmn" class="huffman-contenedor" data-vacio="Aquí va el lector del .hfmn"></div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+
+    </div>
+  </div>
+
+  <!-- JS de Bootstrap: pestañas y menú deslizable en móvil -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- DI-04: descomentar cuando exista js/pagina-principal.js -->
+  <!-- <script type="module" src="js/pagina-principal.js"></script> -->
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prueba - Estándar de eventos</title>
+  <style>
+    body { font-family: system-ui, sans-serif; background: #0f1419; color: #e6e6e6; margin: 24px; }
+    h1 { font-size: 1.3rem; }
+    .controles { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin: 12px 0; }
+    button, select { background: #1f2a33; color: #e6e6e6; border: 1px solid #33424f; padding: 6px 12px; border-radius: 6px; cursor: pointer; }
+    button:hover { background: #2a3844; }
+    #lienzo { display: flex; align-items: flex-end; gap: 2px; height: 300px; background: #151c22; padding: 8px; border-radius: 8px; }
+    .barra { flex: 1; background: #1f8a9c; border-radius: 2px 2px 0 0; transition: height 80ms; }
+    .barra.comparando  { background: #e0b034; }
+    .barra.escribiendo { background: #e0455a; }
+    .barra.ordenado    { background: #3ecf8e; }
+    table { border-collapse: collapse; font-size: .9rem; }
+    th, td { padding: 4px 10px; border-bottom: 1px solid #263038; text-align: left; }
+    .ok   { color: #3ecf8e; }
+    .fail { color: #e0455a; }
+    .leyenda span { margin-right: 12px; }
+    .leyenda i { display: inline-block; width: 10px; height: 10px; margin-right: 4px; border-radius: 2px; }
+  </style>
+</head>
+<body>
+  <h1>Prueba del estándar de eventos - los 8 algoritmos del catálogo</h1>
+
+  <h2>Pruebas automáticas</h2>
+  <p id="resumen"></p>
+  <table>
+    <thead id="cabecera"></thead>
+    <tbody id="cuerpo"></tbody>
+  </table>
+
+  <h2>Animación</h2>
+  <div class="controles">
+    <select id="algoritmo"></select>
+    <label>Tamaño: <input id="tamano" type="range" min="5" max="100" value="30"> <span id="tamanoTxt">30</span></label>
+    <button id="btnNuevo">Nuevo arreglo</button>
+    <button id="btnPlay">▶ Reproducir</button>
+    <button id="btnPausa">⏸ Pausar</button>
+    <button id="btnPaso">⏭ Paso</button>
+    <button id="btnReiniciar">↺ Reiniciar</button>
+    <label>Velocidad (ms): <input id="velocidad" type="range" min="1" max="300" value="40"></label>
+  </div>
+  <div class="leyenda">
+    <span><i style="background:#1f8a9c"></i>Inactivo</span>
+    <span><i style="background:#e0b034"></i>Comparación</span>
+    <span><i style="background:#e0455a"></i>Escritura / intercambio</span>
+    <span><i style="background:#3ecf8e"></i>Ordenado</span>
+  </div>
+  <p id="progreso">Evento 0 / 0</p>
+  <div id="lienzo"></div>
+
+  <script type="module">
+    import { ALGORITMOS, buscarAlgoritmo } from '../js/algoritmos/catalogo.js';
+    import { Barras } from '../js/visualizador/barras.js';
+    import { Reproductor } from '../js/visualizador/reproductor.js';
+    import { correrPruebas } from './pruebas-algoritmos.js';
+
+    const $ = (id) => document.getElementById(id);
+
+    // ---------- Pruebas automáticas: tabla algoritmo × prueba ----------
+    const resultados = correrPruebas();
+    const pruebas = [...new Set(resultados.map((r) => r.prueba))];
+    const algoritmos = [...new Set(resultados.map((r) => r.algoritmo))];
+
+    $('cabecera').innerHTML = `<tr><th>Prueba</th>${algoritmos.map((a) => `<th>${a}</th>`).join('')}</tr>`;
+    $('cuerpo').innerHTML = pruebas.map((p) => `<tr><td>${p}</td>${algoritmos.map((a) => {
+      const r = resultados.find((x) => x.algoritmo === a && x.prueba === p);
+      if (!r) return '<td>—</td>';
+      return `<td class="${r.ok ? 'ok' : 'fail'}">${r.ok ? '✔' : '✘'}</td>`;
+    }).join('')}</tr>`).join('');
+
+    const fallas = resultados.filter((r) => !r.ok);
+    $('resumen').className = fallas.length ? 'fail' : 'ok';
+    $('resumen').textContent = fallas.length
+      ? `${fallas.length} prueba(s) fallaron (detalle en la consola).`
+      : `Todo bien: ${resultados.length} pruebas.`;
+    fallas.forEach((f) => console.error('✘', f.algoritmo, '—', f.prueba));
+
+    // ---------- Animación ----------
+    for (const alg of ALGORITMOS.filter((a) => a.fn)) {
+      $('algoritmo').insertAdjacentHTML('beforeend', `<option value="${alg.id}">${alg.nombre}</option>`);
+    }
+
+    const barras = new Barras($('lienzo'));
+    const reproductor = new Reproductor(barras, {
+      velocidad: Number($('velocidad').value),
+      alAvanzar: (i, total) => { $('progreso').textContent = `Evento ${i} / ${total}`; },
+    });
+
+    const aleatorio = (n) => Array.from({ length: n }, () => Math.floor(Math.random() * 100) + 1);
+    let arregloActual = [];
+
+    function cargar() {
+      const alg = buscarAlgoritmo($('algoritmo').value);
+      $('tamano').max = alg.maxN;
+      if (arregloActual.length > alg.maxN) arregloActual = aleatorio(alg.maxN);
+      const eventos = [];
+      alg.fn(arregloActual, eventos);
+      reproductor.cargar(arregloActual, eventos);
+    }
+    function nuevoArreglo() {
+      arregloActual = aleatorio(Number($('tamano').value));
+      cargar();
+    }
+
+    $('algoritmo').onchange = cargar;
+    $('tamano').oninput = (e) => { $('tamanoTxt').textContent = e.target.value; };
+    $('tamano').onchange = nuevoArreglo;
+    $('btnNuevo').onclick = nuevoArreglo;
+    $('btnPlay').onclick = () => reproductor.reproducir();
+    $('btnPausa').onclick = () => reproductor.pausar();
+    $('btnPaso').onclick = () => { reproductor.pausar(); reproductor.paso(); };
+    $('btnReiniciar').onclick = () => reproductor.reiniciar();
+    $('velocidad').oninput = (e) => reproductor.setVelocidad(Number(e.target.value));
+
+    nuevoArreglo();
+  </script>
+</body>
+</html>

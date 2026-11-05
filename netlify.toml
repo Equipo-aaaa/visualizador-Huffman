@@ -1,0 +1,12 @@
+# Configuración de Netlify (DA-02)
+[build]
+  # El sitio es estático: se publica la raíz tal cual, sin paso de build
+  publish = "."
+  functions = "netlify/functions"
+
+# /api/buscar -> netlify/functions/buscar.mjs, /api/libro -> libro.mjs
+# status 200 hace que sea una reescritura interna: el navegador sigue viendo /api/...
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200

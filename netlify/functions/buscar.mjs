@@ -1,7 +1,7 @@
 // GET /api/buscar?q=<texto>&pagina=<n>  (DA-03)
 // Consulta Gutendex y devuelve solo los campos que usa el buscador.
 // Existe porque el navegador no puede pedirle esto directo a Gutenberg (CORS).
-import { URL_GUTENDEX, responderError, urlTexto } from '../gutendex.mjs';
+import { URL_GUTENDEX, CABECERAS, responderError, urlTexto } from '../gutendex.mjs';
 
 export default async (peticion) => {
   // searchParams funciona como request.args de Flask
@@ -31,7 +31,7 @@ export default async (peticion) => {
       throw new Error(`Gutendex respondió ${respuesta.status}`);
     }
     datos = await respuesta.json();
-    
+
     } catch (error) {
     // Se registra en la terminal (y en los logs de Netlify) para saber la causa real
     console.error('Error al consultar Gutendex:', error);

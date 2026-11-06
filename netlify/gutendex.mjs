@@ -4,6 +4,12 @@
 
 export const URL_GUTENDEX = 'https://gutendex.com/books/';
 
+// Gutendex rechaza (403) peticiones anónimas desde servidores de la nube.
+// Con un User-Agent propio la petición se identifica como de este proyecto.
+export const CABECERAS = {
+  'User-Agent': 'VisualizadorHuffman/1.0 (proyecto escolar CUCEI; https://prismatic-travesseiro-4f9d7f.netlify.app)',
+};
+
 // Respuesta de error con la forma del contrato: { error: 'mensaje' }
 export function responderError(codigo, mensaje) {
   return Response.json({ error: mensaje }, { status: codigo });

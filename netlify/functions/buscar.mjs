@@ -10,6 +10,11 @@ const CABECERAS = {
 // gutenberg.org devuelve 25 libros por página en su búsqueda OPDS
 const LIBROS_POR_PAGINA = 25;
 
+
+// Netlify corta la función a los 10 segundos; se aborta antes para poder
+// responder un error claro (DA-07)
+const TIEMPO_MAXIMO_MS = 8000;
+
 function responderError(codigo, mensaje) {
   return Response.json({ error: mensaje }, { status: codigo });
 }
@@ -81,14 +86,17 @@ export default async (peticion) => {
   let xml;
   try {
     // fetch + await es como requests.get dentro de asyncio
-    const respuesta = await fetch(url, { headers: CABECERAS });
+    const respuesta = await fetch(url, { headers: CABECERAS, signal: AbortSignal.timeout(TIEMPO_MAXIMO_MS) });
     if (!respuesta.ok) {
       throw new Error(`Gutenberg respondió ${respuesta.status}`);
     }
     xml = await respuesta.text();
   } catch (error) {
     // Se registra en los logs de Netlify para saber la causa real
-    console.error('Error al buscar en Gutenberg:', error);
+        console.error('Error al buscar en Gutenberg:', error);
+    if (error.name === 'TimeoutError') {
+      return responderError(502, 'Gutenberg tardó demasiado en responder. Intenta de nuevo.');
+    }
     return responderError(502, 'No se pudo consultar el catálogo de Gutenberg. Intenta de nuevo.');
   }
 

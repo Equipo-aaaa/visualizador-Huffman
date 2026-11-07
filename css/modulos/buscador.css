@@ -100,3 +100,27 @@
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.9rem;
 }
+
+/* DA-06: zona para subir un .txt */
+.buscador-zona {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  margin-top: 0.75rem;
+  padding: 0.9rem;
+  border: 2px dashed rgba(255, 255, 255, 0.15);
+  border-radius: 0.5rem;
+  transition: border-color 0.15s, background-color 0.15s;
+}
+
+.buscador-zona--activa {
+  border-color: var(--primario, #06B6D4);
+  background: rgba(6, 182, 212, 0.08);
+}
+
+.buscador-zona-texto {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.9rem;
+}

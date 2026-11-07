@@ -1,5 +1,6 @@
-// DA-05 · Buscador de libros de Gutenberg. Daniel Alejandro Rodríguez González
-// Dibuja el buscador dentro del contenedor. Al elegir un libro lo descarga y
+// DA-05 y DA-06 · Buscador de libros de Gutenberg y carga de un .txt propio.
+// Daniel Alejandro Rodríguez González
+// Dibuja el buscador dentro del contenedor. Al elegir un libro (o subir un .txt)
 // llama alElegirTexto(texto, metadatos); a la página no le importa de dónde vino.
 import { buscarLibros, descargarLibro } from './cliente.js';
 
@@ -41,7 +42,22 @@ export function montarBuscador(contenedor, { alElegirTexto }) {
   paginacion.append(botonAnterior, textoPagina, botonSiguiente);
   paginacion.hidden = true;
 
-  contenedor.append(formulario, estado, lista, paginacion);
+  // DA-06: zona para subir un .txt propio, con botón o arrastrando el archivo
+  const zona = crear('div', 'buscador-zona');
+  const selector = crear('input');
+  selector.type = 'file';
+  // accept filtra lo que muestra la ventana de archivos; igual se valida al leer
+  selector.accept = '.txt,text/plain';
+  selector.hidden = true;
+  const botonArchivo = crear('button', 'btn btn-outline-info btn-sm', 'Elegir archivo');
+  botonArchivo.type = 'button';
+  zona.append(
+    crear('span', 'buscador-zona-texto', '¿Tienes tu propio texto? Arrastra un .txt aquí o'),
+    botonArchivo,
+    selector,
+  );
+
+  contenedor.append(formulario, zona, estado, lista, paginacion);
 
   // ---- Estado ----
   let consultaActual = '';
@@ -160,6 +176,34 @@ export function montarBuscador(contenedor, { alElegirTexto }) {
     }
   }
 
+  // DA-06: lee el .txt de la compu del usuario. No pasa por el servidor.
+  async function leerArchivo(archivo) {
+    // Se revisa la extensión porque Windows a veces no reporta el tipo del archivo
+    if (!archivo.name.toLowerCase().endsWith('.txt')) {
+      mostrarEstado(`"${archivo.name}" no es un .txt. Solo se aceptan archivos de texto plano.`, true);
+      return;
+    }
+
+    const numero = ++peticionActual;
+    mostrarEstado(`Leyendo "${archivo.name}"…`);
+
+    try {
+      // .text() lee el archivo como UTF-8, igual que open(ruta, encoding='utf-8').read()
+      const texto = await archivo.text();
+      if (numero !== peticionActual) return;
+
+      mostrarEstado(`Listo: "${archivo.name}".`);
+      alElegirTexto(texto, {
+        titulo: archivo.name.replace(/\.txt$/i, ''),
+        origen: 'local',
+        nombreArchivo: archivo.name,
+      });
+    } catch {
+      if (numero !== peticionActual) return;
+      mostrarEstado(`No se pudo leer "${archivo.name}".`, true);
+    }
+  }
+
   // ---- Eventos ----
   formulario.addEventListener('submit', (evento) => {
     // Sin esto el formulario recargaría la página
@@ -173,6 +217,26 @@ export function montarBuscador(contenedor, { alElegirTexto }) {
   });
   botonAnterior.addEventListener('click', () => buscar(consultaActual, paginaActual - 1));
   botonSiguiente.addEventListener('click', () => buscar(consultaActual, paginaActual + 1));
+
+  // El botón visible abre la ventana del input de archivo, que está oculto
+  botonArchivo.addEventListener('click', () => selector.click());
+  selector.addEventListener('change', () => {
+    if (selector.files.length > 0) leerArchivo(selector.files[0]);
+    // Se limpia para que volver a elegir el mismo archivo también dispare 'change'
+    selector.value = '';
+  });
+
+  // Sin preventDefault en dragover y drop, el navegador abriría el archivo en la pestaña
+  zona.addEventListener('dragover', (evento) => {
+    evento.preventDefault();
+    zona.classList.add('buscador-zona--activa');
+  });
+  zona.addEventListener('dragleave', () => zona.classList.remove('buscador-zona--activa'));
+  zona.addEventListener('drop', (evento) => {
+    evento.preventDefault();
+    zona.classList.remove('buscador-zona--activa');
+    if (evento.dataTransfer.files.length > 0) leerArchivo(evento.dataTransfer.files[0]);
+  });
 
   return {
     destruir() {

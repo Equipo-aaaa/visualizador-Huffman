@@ -1,0 +1,102 @@
+/* Estilos de js/gutenberg/buscador.js. Clases con prefijo "buscador-". */
+
+.buscador-formulario {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.buscador-boton {
+  font-weight: 600;
+}
+
+.buscador-estado {
+  margin: 0.75rem 0;
+  min-height: 1.5rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.9rem;
+}
+
+.buscador-estado--error {
+  color: var(--rosa, #F43F5E);
+}
+
+.buscador-resultados {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 26rem;
+  overflow: auto;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.5rem;
+}
+
+.buscador-resultados:empty {
+  display: none;
+}
+
+.buscador-libro {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 0.6rem;
+  width: 100%;
+  padding: 0.6rem 0.9rem;
+  text-align: left;
+  color: inherit;
+  background: none;
+  border: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  cursor: pointer;
+}
+
+.buscador-libro:hover:not(:disabled) {
+  background: rgba(6, 182, 212, 0.08);
+}
+
+.buscador-libro:focus-visible {
+  outline: 2px solid var(--primario, #06B6D4);
+  outline-offset: -2px;
+}
+
+.buscador-libro:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+
+.buscador-titulo {
+  flex-basis: 100%;
+  font-weight: 600;
+  color: var(--primario, #06B6D4);
+}
+
+.buscador-autores {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.9rem;
+}
+
+.buscador-etiqueta {
+  padding: 0.05rem 0.45rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--ambar, #F59E0B);
+  background: rgba(245, 158, 11, 0.12);
+  border-radius: 0.3rem;
+}
+
+.buscador-etiqueta--aviso {
+  color: var(--rosa, #F43F5E);
+  background: rgba(244, 63, 94, 0.12);
+}
+
+.buscador-paginacion {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 0.75rem;
+}
+
+.buscador-pagina {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.9rem;
+}

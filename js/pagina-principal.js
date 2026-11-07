@@ -65,7 +65,7 @@ function comprimirTexto(texto, metadatos) {
 
 // TEMPORAL: se quita cuando exista montarBuscador
 async function cargarEjemplo() {
-  const respuesta = await fetch('ejemplos/abracadabra.txt');
+  const respuesta = await fetch('/api/libro?id=11');
 
   if (!respuesta.ok) {
     throw new Error('No se pudo cargar el texto de ejemplo.');

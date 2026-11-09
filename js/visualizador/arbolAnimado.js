@@ -304,9 +304,12 @@ export function montarArbol(contenedor, pasos, opciones = { msPorPaso: 400 }) {
 
     if (paso === 0) {
       estado.textContent = `${hojas.length} símbolos, cada uno con su frecuencia`;
-    } else {
+    } else if (ultimaFusion) {
       const { izq, der, nuevo } = ultimaFusion;
       estado.textContent = `Paso ${paso} de ${fusiones.length}: ${describir(izq)} y ${describir(der)} forman un nodo de ${nuevo.frecuencia.toLocaleString('es-MX')}`;
+    } else {
+      // "Ir al final" deja ultimaFusion en null para dibujar el árbol sin resaltados
+      estado.textContent = `Paso ${paso} de ${fusiones.length}`;
     }
     if (terminado()) estado.textContent += fusiones.length > 0 ? ' · árbol terminado' : '';
 

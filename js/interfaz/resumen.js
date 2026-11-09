@@ -62,18 +62,26 @@ export function montarResumen(contenedor, resultado) {
   // En un texto muy corto el .hfmn sale más grande que el original, porque
   // además de los datos guarda la cabecera y la tabla de frecuencias. No es un
   // error: se muestra para explicar que Huffman conviene con textos largos.
-  const crecio = ahorro < 0;
+  // Se compara hfmn con original y no el signo de ahorro, porque con un texto
+  // vacío no se puede dividir entre 0 y ahorro no indica que el archivo creció.
+  let tarjetaFinal;
+  if (original === 0) {
+    tarjetaFinal = crearTarjeta('Texto vacío', '—',
+      'El .hfmn solo guarda la cabecera', 'resumen-tarjeta--aviso');
+  } else if (hfmn > original) {
+    tarjetaFinal = crearTarjeta('Crecimiento', formatearPorcentaje(hfmn / original - 1),
+      'El texto es muy corto para comprimirlo', 'resumen-tarjeta--aviso');
+  } else {
+    tarjetaFinal = crearTarjeta('Ahorro', formatearPorcentaje(ahorro),
+      `${formatearBytes(original - hfmn)} menos`, 'resumen-tarjeta--ahorro');
+  }
 
   tarjetas.append(
     crearTarjeta('Original', formatearBytes(original),
       `${original.toLocaleString('es-MX')} bytes en UTF-8`),
     crearTarjeta('Archivo .hfmn', formatearBytes(hfmn),
       `${hfmn.toLocaleString('es-MX')} bytes`),
-    crecio
-      ? crearTarjeta('Crecimiento', formatearPorcentaje(-ahorro),
-        'El texto es muy corto para comprimirlo', 'resumen-tarjeta--aviso')
-      : crearTarjeta('Ahorro', formatearPorcentaje(ahorro),
-        `${formatearBytes(original - hfmn)} menos`, 'resumen-tarjeta--ahorro'),
+    tarjetaFinal,
   );
 
   // ---- Barra de proporción ----
@@ -81,11 +89,14 @@ export function montarResumen(contenedor, resultado) {
   // (máximo 100 %, por si el archivo salió más grande).
   const barra = crear('div', 'resumen-barra');
   const relleno = crear('div', 'resumen-barra-relleno');
-  relleno.style.width = `${Math.min(hfmn / original, 1) * 100}%`;
+  // Con un texto vacío la barra se llena, igual que cuando el archivo crece
+  const proporcion = original === 0 ? 1 : hfmn / original;
+  relleno.style.width = `${Math.min(proporcion, 1) * 100}%`;
   barra.append(relleno);
   barra.setAttribute('role', 'img');
-  barra.setAttribute('aria-label',
-    `El .hfmn ocupa ${formatearPorcentaje(hfmn / original)} del tamaño original`);
+  barra.setAttribute('aria-label', original === 0
+    ? 'El texto original está vacío'
+    : `El .hfmn ocupa ${formatearPorcentaje(proporcion)} del tamaño original`);
 
   // ---- Descarga ----
   // Un Blob es un archivo que vive en la memoria del navegador, y createObjectURL

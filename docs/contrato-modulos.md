@@ -73,15 +73,21 @@ Detalles:
 
 ```js
 {
-  total: 128,
+  total: null,
   pagina: 1,
   haySiguiente: true,
   libros: [{ id: 2000, titulo: 'Don Quijote', autores: ['Cervantes Saavedra, Miguel de'],
-             idiomas: ['es'], descargas: 12345, tieneTexto: true }]
+             idiomas: ['Spanish'], descargas: null, tieneTexto: true }]
 }
 ```
 
-**`GET /api/libro?id=<n>`** (`libro.mjs`) → `200`, `text/plain; charset=utf-8` con el libro completo.
+La búsqueda usa directamente gutenberg.org, porque Gutendex bloquea las peticiones que vienen de los servidores de Netlify. Por eso algunos campos no traen el dato:
+
+- `total` y `descargas` son `null`: gutenberg.org no los da en su búsqueda.
+- `idiomas` trae el nombre del idioma en inglés, sacado del título (`'Spanish'`). Los libros en inglés vienen con `[]`.
+- `tieneTexto` siempre es `true`, porque la búsqueda no dice qué formatos tiene cada libro. Si un libro no tiene `.txt`, `/api/libro` responde `404` al descargarlo.
+
+**`GET /api/libro?id=<n>`** (`libro.mjs`) → `200`, `text/plain; charset=utf-8` con el libro completo. Lo descarga de `gutenberg.org/ebooks/<id>.txt.utf-8`.
 
 Errores de ambas: JSON `{ error: 'mensaje en español' }` con código:
 
@@ -90,7 +96,7 @@ Errores de ambas: JSON `{ error: 'mensaje en español' }` con código:
 | 400 | Falta `q` o `id`, o no es válido |
 | 404 | El libro no existe o no tiene versión `.txt` |
 | 413 | El libro supera el tamaño que puede devolver la función |
-| 502 | Gutendex o Gutenberg no respondieron |
+| 502 | Gutenberg no respondió |
 
 ### Frontend (`js/gutenberg/`)
 

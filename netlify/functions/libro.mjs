@@ -4,8 +4,7 @@
 // No usa Gutendex: desde los servidores de Netlify responde 403.
 
 const CABECERAS = {
-  'User-Agent': 'VisualizadorHuffman/1.0 (proyecto escolar CUCEI; https://prismatic-travesseiro-4f9d7f.netlify.app)',
-};
+  'User-Agent': 'VisualizadorHuffman/1.0 (proyecto escolar CUCEI; https://visualizador-huffman.netlify.app)',};
 
 // Netlify no deja que una función responda más de 6 MB (contando cabeceras).
 // Se deja un margen para no pasarse.

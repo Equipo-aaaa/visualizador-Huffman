@@ -1,9 +1,11 @@
 // Orquesta huffman.html: consigue el texto, lo manda al worker y monta cada
 // vista con el resultado. Los módulos no se conocen entre sí; aquí se conectan.
+import { montarBuscador } from './gutenberg/buscador.js';
 import { montarArbol } from './visualizador/arbolAnimado.js';
 import { montarTablaCodigos } from './visualizador/tablaCodigos.js';
 
 const textoActual = document.getElementById('textoActual');
+const contenedorBuscador = document.getElementById('buscador');
 const desplegableArbol = document.getElementById('desplegable-arbol');
 const contenedorArbol = document.getElementById('arbol');
 const contenedorTabla = document.getElementById('tabla-codigos');
@@ -56,24 +58,13 @@ function mostrarResultado(resultado) {
   bootstrap.Tab.getOrCreateInstance(pestana).show();
 }
 
-// Punto de entrada común: el buscador de Daniel llamará esta misma función
+// Punto de entrada común: el buscador la llama al elegir un libro o subir un .txt
 function comprimirTexto(texto, metadatos) {
   textoActual.textContent = 'Comprimiendo...';
   textoActual.classList.replace('text-danger', 'text-secondary');
   trabajador.postMessage({ tipo: 'comprimir', texto, metadatos });
 }
 
-// TEMPORAL: se quita cuando exista montarBuscador
-async function cargarEjemplo() {
-  const respuesta = await fetch('ejemplos/abracadabra.txt');
-
-  if (!respuesta.ok) {
-    throw new Error('No se pudo cargar el texto de ejemplo.');
-  }
-
-  const texto = await respuesta.text();
-  comprimirTexto(texto, { titulo: 'abracadabra', origen: 'local' });
-}
 
 trabajador.onmessage = (evento) => {
   const mensaje = evento.data;
@@ -90,4 +81,4 @@ trabajador.onerror = () => mostrarError('No se pudo iniciar la compresión.');
 
 desplegableArbol.addEventListener('toggle', actualizarArbol);
 
-cargarEjemplo().catch((error) => mostrarError(error.message));
+montarBuscador(contenedorBuscador, { alElegirTexto: comprimirTexto });

@@ -117,6 +117,7 @@ function mostrarResultado(resultado, operacion) {
   if (operacion === 'descomprimir') {
     // El usuario sigue en la sección 3, donde los lectores ya se actualizaron
     vistaDescompresion.mostrarEstado(`Listo: se recuperó "${nombre}".`);
+    vistaDescompresion.mostrarDescarga(resultado.texto, nombre);
   } else {
     // El resultado está en la segunda pestaña: se abre para que se vea sin
     // buscarlo. bootstrap es global porque su script carga antes que este módulo.

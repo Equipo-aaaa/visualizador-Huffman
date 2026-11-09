@@ -3,12 +3,14 @@
 import { montarBuscador } from './gutenberg/buscador.js';
 import { montarArbol } from './visualizador/arbolAnimado.js';
 import { montarTablaCodigos } from './visualizador/tablaCodigos.js';
+import { montarResumen } from './interfaz/resumen.js';
 
 const textoActual = document.getElementById('textoActual');
 const contenedorBuscador = document.getElementById('buscador');
 const desplegableArbol = document.getElementById('desplegable-arbol');
 const contenedorArbol = document.getElementById('arbol');
 const contenedorTabla = document.getElementById('tabla-codigos');
+const contenedorResumen = document.getElementById('resumen');
 
 // new URL(...) calcula la ruta desde este archivo, no desde la página, para
 // que funcione igual en Live Server y en Netlify.
@@ -17,6 +19,7 @@ const trabajador = new Worker(new URL('./trabajador.js', import.meta.url), { typ
 let resultadoActual = null;
 let vistaArbol = null;
 let vistaTabla = null;
+let vistaResumen = null;
 
 function mostrarError(mensaje) {
   textoActual.textContent = mensaje;
@@ -47,6 +50,13 @@ function mostrarResultado(resultado) {
     vistaTabla.destruir();
   }
   vistaTabla = montarTablaCodigos(contenedorTabla, resultado.codigos);
+
+  // destruir() libera el .hfmn anterior antes de montar el del nuevo libro
+  if (vistaResumen) {
+    vistaResumen.destruir();
+  }
+  vistaResumen = montarResumen(contenedorResumen, resultado);
+
   actualizarArbol();
 
   const { titulo, nombreArchivo } = resultado.metadatos;
@@ -58,13 +68,13 @@ function mostrarResultado(resultado) {
   bootstrap.Tab.getOrCreateInstance(pestana).show();
 }
 
-// Punto de entrada común: el buscador la llama al elegir un libro o subir un .txt
+// Punto de entrada común: el buscador la llama tanto al elegir un libro de
+// Gutenberg como al subir un .txt, así que aquí no importa de dónde vino.
 function comprimirTexto(texto, metadatos) {
   textoActual.textContent = 'Comprimiendo...';
   textoActual.classList.replace('text-danger', 'text-secondary');
   trabajador.postMessage({ tipo: 'comprimir', texto, metadatos });
 }
-
 
 trabajador.onmessage = (evento) => {
   const mensaje = evento.data;

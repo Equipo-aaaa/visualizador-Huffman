@@ -1,0 +1,34 @@
+/* DI-06 · Carga del .hfmn. Los colores salen de css/estilos.css. */
+
+.descompresion-zona {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: .6rem;
+  padding: 1.25rem 1rem;
+  border: 2px dashed var(--borde);
+  border-radius: 14px;
+  background: var(--fondo);
+  text-align: center;
+  transition: border-color .15s ease, background-color .15s ease;
+}
+
+/* Mientras se arrastra un archivo encima */
+.descompresion-zona--activa {
+  border-color: var(--primario);
+  background: var(--superficie-2);
+}
+
+.descompresion-zona-texto {
+  font-size: .9rem;
+  color: var(--texto-suave);
+}
+
+.descompresion-estado {
+  margin: .75rem 0 0;
+  font-size: .85rem;
+  color: var(--texto-suave);
+}
+
+.descompresion-estado--error { color: var(--texto-escritura); }

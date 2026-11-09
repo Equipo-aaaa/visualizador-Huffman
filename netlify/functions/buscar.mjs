@@ -4,8 +4,7 @@
 // No usa Gutendex: desde los servidores de Netlify responde 403.
 
 const CABECERAS = {
-  'User-Agent': 'VisualizadorHuffman/1.0 (proyecto escolar CUCEI; https://prismatic-travesseiro-4f9d7f.netlify.app)',
-};
+  'User-Agent': 'VisualizadorHuffman/1.0 (proyecto escolar CUCEI; https://visualizador-huffman.netlify.app)',};
 
 // gutenberg.org devuelve 25 libros por página en su búsqueda OPDS
 const LIBROS_POR_PAGINA = 25;

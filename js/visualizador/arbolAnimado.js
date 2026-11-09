@@ -138,11 +138,30 @@ function describir(nodo) {
   return nodo.hijos.length === 0 ? `«${simboloVisible(nodo.simbolo)}» (${frecuencia})` : `nodo (${frecuencia})`;
 }
 
-function crearBoton(texto) {
+// Cambia el ícono y el texto del botón. El texto va en su propio <span> para no
+// borrar el ícono, porque textContent reemplazaría todo lo que hay adentro.
+function ponerContenido(boton, texto, icono) {
+  const elementoIcono = document.createElement('i');
+  elementoIcono.className = `bi ${icono}`;
+  elementoIcono.setAttribute('aria-hidden', 'true');
+
+  if (!texto) {
+    boton.replaceChildren(elementoIcono);
+    return;
+  }
+
+  elementoIcono.classList.add('me-1');
+  const elementoTexto = document.createElement('span');
+  elementoTexto.textContent = texto;
+  boton.replaceChildren(elementoIcono, elementoTexto);
+}
+
+// Usa las mismas clases que los controles de Ordenamientos y Fibonacci
+function crearBoton(texto, icono, claseColor = '') {
   const boton = document.createElement('button');
   boton.type = 'button';
-  boton.className = 'btn btn-sm btn-outline-info';
-  boton.textContent = texto;
+  boton.className = `btn btn-control ${claseColor}`.trim();
+  ponerContenido(boton, texto, icono);
   return boton;
 }
 
@@ -172,12 +191,15 @@ export function montarArbol(contenedor, pasos, opciones = { msPorPaso: 400 }) {
   // --- Estructura de la vista ---
   const barra = document.createElement('div');
   barra.className = 'arbolAnimado-barra';
-  const botonPausa = crearBoton('Pausar');
-  const botonReiniciar = crearBoton('Reiniciar');
-  const botonFinal = crearBoton('Ir al final');
-  const botonMas = crearBoton('＋');
-  const botonMenos = crearBoton('－');
-  const botonAjustar = crearBoton('Ajustar');
+  const botonPausa = crearBoton('Pausar', 'bi-pause-fill', 'control-pausar');
+  botonPausa.dataset.texto = 'Pausar';
+  const botonReiniciar = crearBoton('Reiniciar', 'bi-arrow-counterclockwise', 'control-reiniciar');
+  const botonFinal = crearBoton('Ir al final', 'bi-skip-forward-fill', 'control-paso');
+  const botonMas = crearBoton('', 'bi-plus-lg');
+  const botonMenos = crearBoton('', 'bi-dash-lg');
+  const botonAjustar = crearBoton('Ajustar', 'bi-fullscreen');
+  // Separa el zoom de la reproducción, como la velocidad en las otras páginas
+  botonMas.classList.add('ms-lg-auto');
   botonMas.setAttribute('aria-label', 'Acercar');
   botonMenos.setAttribute('aria-label', 'Alejar');
   const estado = document.createElement('span');
@@ -313,7 +335,31 @@ export function montarArbol(contenedor, pasos, opciones = { msPorPaso: 400 }) {
     }
     if (terminado()) estado.textContent += fusiones.length > 0 ? ' · árbol terminado' : '';
 
-    botonPausa.textContent = temporizador !== null ? 'Pausar' : terminado() ? 'Repetir' : 'Continuar';
+    actualizarBotonPausa();
+  }
+
+  // Un mismo botón pausa, continúa o repite; su ícono y su color cambian con él
+  function actualizarBotonPausa() {
+    let texto = 'Continuar';
+    let icono = 'bi-play-fill';
+    let claseColor = 'control-iniciar';
+
+    if (temporizador !== null) {
+      texto = 'Pausar';
+      icono = 'bi-pause-fill';
+      claseColor = 'control-pausar';
+    } else if (terminado()) {
+      texto = 'Repetir';
+      icono = 'bi-arrow-repeat';
+    }
+
+    // Solo se redibuja si cambió. Si el ícono se reemplazara en cada paso, un clic
+    // que empieza antes del cambio y termina después se perdería.
+    if (botonPausa.dataset.texto === texto) return;
+    botonPausa.dataset.texto = texto;
+
+    botonPausa.className = `btn btn-control ${claseColor}`;
+    ponerContenido(botonPausa, texto, icono);
   }
 
   function programar() {

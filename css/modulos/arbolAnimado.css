@@ -72,7 +72,7 @@
 }
 
 .arbolAnimado-estado {
-  flex: 1 1 16rem;
+  flex: 1 1 100%;   /* renglón propio: así el mensaje no mueve los botones */
   color: rgba(255, 255, 255, 0.75);
   font-size: 0.9rem;
 }

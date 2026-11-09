@@ -132,7 +132,11 @@ Errores de ambas: JSON `{ error: 'mensaje en español' }` con código:
 | `js/pagina-principal.js` | Orquesta todo: recibe el texto del buscador, comprime en el worker y monta cada vista |
 | `js/trabajador.js` | Web Worker que llama `comprimir` / `descomprimir` (mensajes abajo) |
 | `js/interfaz/resumen.js` | `montarResumen(contenedor, resultado)`: tamaños y botón de descarga del `.hfmn` |
-| `js/interfaz/descompresion.js` | `montarDescompresion(contenedor, { alCargarHfmn })`: botón para cargar un `.hfmn` |
+| `js/interfaz/descompresion.js` | `montarDescompresion(contenedor, { alCargarHfmn })`: botón para cargar un `.hfmn` y descargar el texto recuperado como `.txt` |
+
+- `montarDescompresion` revisa que el archivo termine en `.hfmn` y no esté vacío, y llama `alCargarHfmn(bytes, nombreArchivo)` con los bytes como `Uint8Array`. No descomprime: eso lo hace la página con el worker.
+- Devuelve `{ mostrarEstado(mensaje, esError = false), mostrarDescarga(texto, titulo), destruir() }`. La página usa `mostrarEstado` para avisar junto al botón si el archivo se recuperó o por qué no es válido.
+- `mostrarDescarga` guarda el texto recuperado y muestra el botón **Descargar .txt**. El archivo se guarda en UTF-8 y se nombra con `titulo`, sin los caracteres que Windows no acepta. El botón se oculta al cargar otro archivo.
 
 ### Contenedores de `huffman.html`
 

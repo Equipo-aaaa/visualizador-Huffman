@@ -657,4 +657,114 @@ body {
 .huffman-pasos li + li {
   margin-top: .5rem;
 }
+
+/* =========================================================================
+   Página 4: Fibonacci
+   ========================================================================= */
  
+/* Con cuatro páginas, el menú queda en dos filas de dos en todas las pantallas */
+.navegacion {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+ 
+.pagina-fibonacci { --color-pagina: var(--primario); --color-pagina-texto: var(--acento-primario); }
+ 
+.fib-pasos {
+  padding-left: 1.1rem;
+  margin-bottom: .75rem;
+  font-size: .85rem;
+  color: var(--texto-suave);
+}
+ 
+.fib-formula {
+  min-height: 3rem;
+  display: flex;
+  align-items: center;
+  padding: .6rem 1rem;
+  margin-bottom: .75rem;
+  font-size: 1.05rem;
+  color: var(--texto);
+  background: var(--fondo);
+  border: 1px solid var(--borde);
+  border-radius: 14px;
+}
+ 
+.fib-tabla {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  padding: .75rem;
+  background: var(--fondo);
+  border: 1px solid var(--borde);
+  border-radius: 14px;
+}
+ 
+.celda-fib {
+  width: 76px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .2rem;
+  font-family: var(--bs-font-monospace);
+}
+ 
+.celda-fib-indice {
+  font-size: .72rem;
+  color: var(--texto-suave);
+}
+ 
+.celda-fib-valor {
+  width: 100%;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: var(--texto-suave);
+  background: var(--superficie-2);
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+  transition: background-color .15s ease, border-color .15s ease, color .15s ease, transform .15s ease;
+}
+ 
+/* La flecha debajo de la celda: se reserva su espacio para que nada brinque */
+.celda-fib::after {
+  content: '\00a0';
+  font-weight: 700;
+  line-height: 1.1;
+}
+ 
+.celda-fib.calculada .celda-fib-valor {
+  color: #04262D;
+  background: var(--barra-inactiva);
+  border-color: var(--barra-inactiva);
+}
+ 
+.celda-fib.comparando .celda-fib-valor {
+  color: #0B0B0E;
+  background: var(--barra-comparando);
+  border-color: var(--barra-comparando);
+  transform: translateY(-2px);
+}
+.celda-fib.comparando::after { content: '↑'; color: var(--texto-comparacion); }
+ 
+.celda-fib.escribiendo .celda-fib-valor {
+  color: #0B0B0E;
+  background: var(--barra-escribiendo);
+  border-color: var(--barra-escribiendo);
+  transform: translateY(-2px);
+}
+.celda-fib.escribiendo::after { content: '↓'; color: var(--texto-escritura); }
+ 
+.celda-fib.ordenado .celda-fib-valor {
+  color: #03231A;
+  background: var(--barra-ordenada);
+  border-color: var(--barra-ordenada);
+}
+ 
+@media (max-width: 767.98px) {
+  .celda-fib { width: 62px; }
+  .celda-fib-valor { font-size: .85rem; }
+  .fib-formula { font-size: .9rem; }
+}

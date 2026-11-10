@@ -2,17 +2,18 @@
 VisuAlgoritmos - Compresión de libros con Huffman y Fibonacci con programación dinámica
 
 Sitio publicado: [[URL de Netlify](https://visualizador-huffman.netlify.app/huffman.html)]
-Repositorio: [[URL del repositorio](https://github.com/Equipo-aaaa/VisualizadorHuffman)]
-GitHub Project: [[URL del GitHub Project](https://github.com/Equipo-aaaa/VisualizadorHuffman/projects)]
+Repositorio: [[URL del repositorio](https://github.com/Equipo-aaaa/visualizador-Huffman)]
+GitHub Project: [[URL del GitHub Project](https://github.com/Equipo-aaaa/visualizador-Huffman/projects)]
+Backlog: [[URL del GitHub Project](https://github.com/orgs/Equipo-aaaa/projects/3)]
 
 El sitio también incluye el Visualizador y el Comparador de ordenamientos de la entrega anterior, documentados en el repositorio [VisualizadorOrdenamientos](https://github.com/Equipo-aaaa/VisualizadorOrdenamientos).
 
 
 ## Integrantes:
-Brayan Jaziel Navarro Ayala
-José Andrés Flores Parra
-Diego Antonio Espinosa Salinas
-Daniel Alejandro Rodríguez González
++ Brayan Jaziel Navarro Ayala
++ José Andrés Flores Parra
++ Diego Antonio Espinosa Salinas
++ Daniel Alejandro Rodríguez González
 
 ## Descripción:
 Esta entrega agrega dos páginas a VisuAlgoritmos:
@@ -172,10 +173,11 @@ Netlify está conectado al repositorio y publica solo cada vez que se hace merge
 
 ## Organización del equipo:
 Responsabilidades por integrante:
-Daniel Alejandro Rodríguez González -   Repositorio, tablero y Netlify; funciones de Gutenberg, buscador y carga de `.txt`; revisión y aprobación de PR
+
+Daniel Alejandro Rodríguez González -   Repositorio, tablero y Netlify. Funciones de Gutenberg, buscador y carga de `.txt`, revisión y aprobación de PR.
 Brayan Jaziel Navarro Ayala         -   Algoritmo de Huffman, formato del archivo `.hfmn`, pruebas y medición de los 5 libros
 José Andrés Flores Parra            -   Animación del árbol con zoom, tabla de códigos y lectores de texto y del `.hfmn`
-Diego Antonio Espinosa Salinas      -   Contratos entre módulos, página de Huffman, flujo de la aplicación, Web Worker, resumen, descompresión, integración y página de Fibonacci
+Diego Antonio Espinosa Salinas      -   Contratos entre módulos, página de Huffman, flujo de la aplicación, Web Worker, resumen, descompresión, integración y página de Fibonacci, revisión y aprobación de PR.
 
 Metodología de trabajo:
 Contratos: antes de programar acordamos por escrito qué datos se pasan entre las partes (los pasos del árbol, el formato `.hfmn` y las funciones de cada módulo), en los documentos de la carpeta `docs/`. Con datos de ejemplo de `abracadabra`, cada quien trabajó su parte sin esperar a los demás, como con el estándar de eventos de la entrega anterior.
@@ -194,17 +196,17 @@ Cómo validamos lo que generó la IA: cada integrante revisó y probó su parte 
 ### José Andrés Flores Parra
 
 Lo que generó la IA:
-Los módulos de su capa: la tabla de códigos (tablaCodigos.js), el árbol animado con zoom y arrastre (arbolAnimado.js), el lector paginado del texto (lectorTexto.js), el lector del .hfmn con sus pestañas hexadecimal y de bits (lectorHfmn.js) y el paginador compartido (paginador.js), con sus estilos y páginas de demo. — Claude
+Los módulos de mi capa: la tabla de códigos (tablaCodigos.js), el árbol animado con zoom y arrastre (arbolAnimado.js), el lector paginado del texto (lectorTexto.js), el lector del .hfmn con sus pestañas hexadecimal y de bits (lectorHfmn.js) y el paginador compartido (paginador.js), con sus estilos y páginas de demo. — Claude
 La lógica del zoom, el desplazamiento y el ajuste del árbol, modificando el atributo viewBox del SVG. — Claude
 La explicación del código paso a paso, comparándolo con Python. — Claude
-Sugerencias de mejora durante las pruebas, como ordenar la tabla por columnas, evitar que un emoji se parta entre dos páginas del lector y detener el temporizador de la animación al destruir el árbol. — Claude
+Sugerencias de mejora durante mis pruebas, como ordenar la tabla por columnas, evitar que un emoji se parta entre dos páginas del lector y detener el temporizador de la animación al destruir el árbol. — Claude
 
-Lo que hizo él:
-Investigó cómo funcionaban las tecnologías de su capa y con eso guió a la IA para adaptar el código a lo que necesitaba el proyecto.
-Hizo cambios directos al código propuesto para ajustarlo a la arquitectura y a los contratos del equipo, y decidió qué cambios aplicar.
-Probó cada módulo con textos de más de 3 MB y árboles de más de 100 símbolos, y usó los resultados para mejorar el rendimiento.
-Trabajó cada tarea en su propia rama (AN-01 a AN-07), ordenó sus commits y dio seguimiento a la revisión de sus Pull Requests.
-Estudió a fondo la matemática del SVG y la lectura en hexadecimal para depurar e integrar las vistas, y comprobó que los colores coincidieran con las zonas del archivo .hfmn.
+Lo que hice yo:
+Investigué cómo funcionaban las tecnologías de mi capa y con eso guié a la IA para adaptar el código a lo que necesitaba el proyecto.
+Hice cambios directos al código propuesto para ajustarlo a la arquitectura y a los contratos del equipo, y decidí qué cambios aplicar.
+Probé cada módulo con textos de más de 3 MB y árboles de más de 100 símbolos, y usé los resultados para mejorar el rendimiento.
+Trabajé cada tarea en su propia rama (AN-01 a AN-07), ordené mis commits y di seguimiento a la revisión de mis Pull Requests.
+Estudié a fondo la matemática del SVG y la lectura en hexadecimal para depurar e integrar las vistas, y comprobé que los colores coincidieran con las zonas del archivo .hfmn.
 
 ### Daniel Alejandro Rodríguez González
 
@@ -214,31 +216,31 @@ El cliente y el buscador (js/gutenberg/cliente.js y buscador.js), con resultados
 El netlify.toml con la redirección de /api/*. — Claude
 La explicación paso a paso de cada archivo, comparando con Python. — Claude
 
-Lo que hizo él:
-Creó el repositorio en la organización, protegió main y armó el tablero con las tareas del backlog.
-Conectó el repositorio a Netlify, preparó su entorno local (Netlify CLI y netlify dev) y vinculó el proyecto.
-Siguió el flujo de una rama y un PR por tarea (DA-02 a DA-07) y revisó y aprobó los PR del equipo.
-Probó cada función y el buscador en local y en las vistas previas de Netlify: errores 400, 404, 413 y 502, paginación y archivos que no son .txt.
-Detectó con los logs de Netlify que Gutendex respondía 403 desde los servidores de Netlify y que a ratos estaba caído (503). Con eso se decidió cambiar a gutenberg.org; probó el cambio y avisó al equipo del cambio de contrato.
-Hizo público el sitio en Netlify y le cambió el nombre a visualizador-huffman.
-Hizo la prueba final del flujo completo en computadora, en incógnito y en celular.
+Lo que hice yo:
+Creé el repositorio en la organización, protegí main y armé el tablero con las tareas del backlog.
+Conecté el repositorio a Netlify, preparé mi entorno local (Netlify CLI y netlify dev) y vinculé el proyecto.
+Seguí el flujo de una rama y un PR por tarea (DA-02 a DA-07) y revisé y aprobé los PR del equipo.
+Probé cada función y el buscador en local y en las vistas previas de Netlify: errores 400, 404, 413 y 502, paginación y archivos que no son .txt.
+Detecté con los logs de Netlify que Gutendex respondía 403 desde los servidores de Netlify y que a ratos estaba caído (503). Con eso decidimos cambiar a gutenberg.org; probé el cambio y avisé al equipo del cambio de contrato.
+Hice público el sitio en Netlify y le cambié el nombre a visualizador-huffman.
+Hice la prueba final del flujo completo en computadora, en incógnito y en celular.
 
 ### Brayan Jaziel Navarro Ayala
 
 Lo que generó la IA:
-Revisó y perfeccionó el código de los módulos de BR-01 a BR-08 (frecuencias, cola de prioridad, árbol, códigos, codificador y formato .hfmn) y sus pruebas, ajustándolos al contrato del equipo: firmas de las funciones, formato del .hfmn y regla de desempate por id. — Claude
+Revisó y perfeccionó el código de mis módulos de BR-01 a BR-08 (frecuencias, cola de prioridad, árbol, códigos, codificador y formato .hfmn) y sus pruebas, ajustándolos al contrato del equipo: firmas de las funciones, formato del .hfmn y regla de desempate por id. — Claude
 El archivo de pruebas automáticas (BR-09) y el script de medición de los cinco libros (BR-10). — Claude
 La explicación de cada módulo paso a paso, comparándolo con Python: Map con dict, la cola de prioridad con heapq, DataView con struct y los operadores de bits. — Claude
 La lógica de los puntos delicados: ordenar los códigos Unicode como números y no como texto, recorrer con for...of para que un emoji cuente como un solo carácter, escribir los bits directamente en los bytes, medir los metadatos en bytes y escribir los números en little-endian. — Claude
 Mejoras como validar los códigos de carácter al leer un .hfmn alterado, lanzar un error en español cuando los datos están truncados, comparar contra los archivos de ejemplos/ byte a byte y comprobar que cada libro de BR-10 se recupere idéntico antes de reportar su resultado. — Claude
 
-Lo que hizo él:
-Armó la base del código de los módulos de BR-01 a BR-08, investigando en qué consistía cada tarea y haciendo una versión preliminar antes de verificarla.
-Adaptó el código a su forma de trabajar: pidió que las pruebas usaran console.log y console.table, que la programación fuera sencilla y eligió los nombres de archivos como comprimirHuffman.js y medirLibros.js.
-Ejecutó y verificó las pruebas de cada tarea en el navegador con Live Server y las de BR-09 también en Node, que instaló para eso. Revisó las consolas y compartió capturas para corregir lo que no coincidía.
-Comprobó que las pruebas automáticas dan 140 aprobadas y 0 fallidas en Node y en el navegador. Cubren texto vacío, un símbolo, todos iguales, acentos, ñ, emoji, \r\n, abracadabra y un libro real (Pride and Prejudice).
-Descargó de Project Gutenberg cinco libros de tamaños distintos para BR-10 y obtuvo la tabla de resultados.
-Trabajó cada tarea en su propia rama (BR-01 a BR-10), con su issue y su PR, guardó respaldos por tarea para seguir avanzando mientras se aprobaban los PR y atendió la revisión del equipo.
+Lo que hice yo:
+Armé la base del código de los módulos de BR-01 a BR-08, investigando en qué consistía cada tarea y haciendo una versión preliminar antes de verificarla.
+Adapté el código a mi forma de trabajar: pedí que las pruebas usaran console.log y console.table, que la programación fuera sencilla y elegí los nombres de archivos como comprimirHuffman.js y medirLibros.js.
+Ejecuté y verifiqué las pruebas de cada tarea en el navegador con Live Server y las de BR-09 también en Node, que instalé para eso. Revisé las consolas y compartí capturas para corregir lo que no coincidía.
+Comprobé que las pruebas automáticas dan 140 aprobadas y 0 fallidas en Node y en el navegador. Cubren texto vacío, un símbolo, todos iguales, acentos, ñ, emoji, \r\n, abracadabra y un libro real (Pride and Prejudice).
+Descargué de Project Gutenberg cinco libros de tamaños distintos para BR-10 y obtuve la tabla de resultados.
+Trabajé cada tarea en su propia rama (BR-01 a BR-10), con su issue y su PR, guardé respaldos por tarea para seguir avanzando mientras se aprobaban los PR y atendí la revisión del equipo.
 
 ### Diego Antonio Espinosa Salinas
 
@@ -260,19 +262,19 @@ Verificación de resultados: comprobar que las tablas de códigos de Alicia y el
 Corrección de errores al integrar: una llave de más en la tabla de códigos, el botón "Ir al final" del árbol y el resumen con un texto vacío. — Claude
 Fibonacci: propuestas de cómo mostrarlo en el sitio; elegí dejar solo la animación de la tabla. — Claude
 
-Lo que hizo él:
-Investigó cómo conectar Project Gutenberg con el sitio antes de decidir cómo dividir el trabajo, y con eso separó el proyecto en capas independientes: algoritmo, Gutenberg, visualización e interfaz.
-Hizo la distribución de tareas entre los cuatro integrantes, con sus fechas y dependencias, y definió qué datos de ejemplo necesitaba cada quien para empezar sin esperar a los demás.
-Tomó las decisiones de diseño: integrar Huffman como tercera página del mismo sitio con el diseño de VisuAlgoritmos, organizarla en tres pestañas, poner el árbol en un desplegable, usar una extensión propia para el archivo comprimido, y en Fibonacci mostrar solo la animación de la tabla, sin gráfica.
-Guió a la IA con las decisiones del equipo e hizo cambios directos sobre el código propuesto para ajustarlo a la estructura del proyecto, por ejemplo dejar los estilos de la página en css/estilos.css junto con los de las otras páginas.
-Preparó su entorno para probar como en el sitio publicado: instaló Node.js y la Netlify CLI y probó con netlify dev las funciones de Gutenberg junto con su página.
-Revisó el documento de requisitos de la actividad contra lo que ya funcionaba, detectó que faltaban el inspector en dos pasos y la comprobación de integridad, y decidió cómo agregarlos sin cambiar la estructura del formato.
-Revisó qué funcionaba y qué no al integrar cada parte, probando con libros reales (Alicia y Don Quijote), un .txt vacío, un id que no existe y archivos que no son .hfmn. Revisó la consola del navegador, ubicó en qué archivo y botón estaba cada error y lo reportó a su responsable con los pasos para reproducirlo.
-Comprobó los resultados con los datos: que el .hfmn descargado del Quijote pesara exactamente lo que marcaba el resumen (1,213,548 bytes), que sus primeros bytes fueran la firma HFMN y que al descomprimirlo se recuperara el texto.
-Mantuvo actualizada la documentación: actualizó CLAUDE.md y los contratos cuando cambió la estructura del sitio y cuando la búsqueda pasó de Gutendex a gutenberg.org.
-Siguió el flujo de una rama y un PR por tarea (DI-01 a DI-08). Cuando una tarea dependía de algo que aún no estaba en main, avanzó con los datos de ejemplo y dejó la issue abierta hasta poder probarla completa.
-Programó Fibonacci en Python (dinámico y recursivo) como base y decidió cómo animarlo reutilizando el reproductor y el estándar de eventos de la entrega anterior.
-Integró el trabajo de los cuatro integrantes en una sola página y revisó y entendió todo lo que generó la IA antes de subirlo.
+Lo que hice yo:
+Investigué cómo conectar Project Gutenberg con el sitio antes de decidir cómo dividir el trabajo, y con eso separé el proyecto en capas independientes: algoritmo, Gutenberg, visualización e interfaz.
+Hice la distribución de tareas entre los cuatro integrantes, con sus fechas y dependencias, y definí qué datos de ejemplo necesitaba cada quien para empezar sin esperar a los demás.
+Tomé las decisiones de diseño: integrar Huffman como tercera página del mismo sitio con el diseño de VisuAlgoritmos, organizarla en tres pestañas, poner el árbol en un desplegable, usar una extensión propia para el archivo comprimido, y en Fibonacci mostrar solo la animación de la tabla, sin gráfica.
+Guié a la IA con las decisiones del equipo e hice cambios directos sobre el código propuesto para ajustarlo a la estructura del proyecto, por ejemplo dejar los estilos de la página en css/estilos.css junto con los de las otras páginas.
+Preparé mi entorno para probar como en el sitio publicado: instalé Node.js y la Netlify CLI y probé con netlify dev las funciones de Gutenberg junto con mi página.
+Revisé el documento de requisitos de la actividad contra lo que ya funcionaba, detecté que faltaban el inspector en dos pasos y la comprobación de integridad, y decidí cómo agregarlos sin cambiar la estructura del formato.
+Revisé qué funcionaba y qué no al integrar cada parte, probando con libros reales (Alicia y Don Quijote), un .txt vacío, un id que no existe y archivos que no son .hfmn. Revisé la consola del navegador, ubiqué en qué archivo y botón estaba cada error y lo reporté a su responsable con los pasos para reproducirlo.
+Comprobé los resultados con los datos: que el .hfmn descargado del Quijote pesara exactamente lo que marcaba el resumen (1,213,548 bytes), que sus primeros bytes fueran la firma HFMN y que al descomprimirlo se recuperara el texto.
+Mantuve actualizada la documentación: actualicé CLAUDE.md y los contratos cuando cambió la estructura del sitio y cuando la búsqueda pasó de Gutendex a gutenberg.org.
+Seguí el flujo de una rama y un PR por tarea (DI-01 a DI-08). Cuando una tarea dependía de algo que aún no estaba en main, avancé con los datos de ejemplo y dejé la issue abierta hasta poder probarla completa.
+Programé Fibonacci en Python (dinámico y recursivo) como base y decidí cómo animarlo reutilizando el reproductor y el estándar de eventos de la entrega anterior.
+Integré el trabajo de los cuatro integrantes en una sola página y revisé y entendí todo lo que generó la IA antes de subirlo.
 
 
 ## Aprendizajes y conclusiones (individuales)

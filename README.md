@@ -140,6 +140,8 @@ Si el archivo se acaba de comprimir en la página, además se compara el texto r
 
 Cada módulo tiene su página de prueba en `demos/`.
 
+Las capturas de cada prueba y la salida de las pruebas automáticas están en [`docs/evidencias/`](docs/evidencias/).
+
 ## Limitaciones conocidas:
 - La función de Netlify solo descarga libros de hasta 6 MB y espera a Gutenberg un máximo de 8 segundos (errores 413 y 502).
 - La búsqueda de gutenberg.org no indica qué libros tienen versión en `.txt`. Si se elige uno que no la tiene, aparece un aviso y hay que elegir otro.

@@ -36,10 +36,11 @@ Las tres páginas comparten encabezado, diseño y un menú con tres botones: Vis
    - Se muestra el resumen de tamaños (original y `.hfmn`) junto al botón para descargar el `.hfmn`.
    - El árbol va en un desplegable: al abrirlo, su construcción se anima sola.
    - La tabla de frecuencias y códigos.
-3. **Lector y descompresión:**
-   - Lector del `.txt` (paginado).
+3. **Inspector y descompresión:**
+   - Botón para cargar cualquier `.hfmn`. El que se acaba de comprimir también llega aquí.
+   - Inspector: muestra la estructura del archivo sin descomprimirlo (nombre, versión, tamaños, ahorro, razón, símbolos, bits, metadatos y los primeros bytes en binario), la tabla guardada y el árbol reconstruido.
    - Lector del `.hfmn` con dos pestañas: hexadecimal por zonas y bits alineados con su carácter.
-   - Botón para cargar cualquier `.hfmn`: se descomprime y su contenido aparece en los lectores.
+   - Botón **Descomprimir**: recupera el texto, lo muestra en el lector paginado, comprueba la integridad con la huella SHA-256 guardada en los metadatos y permite descargarlo como `.txt`.
 
 ## Decisiones tomadas (no cambiar sin acuerdo del equipo)
 
@@ -94,7 +95,7 @@ VisualizadorHuffman/
 │   ├── gutenberg/                cliente.js, buscador.js (Daniel)
 │   ├── visualizador/             Huffman: arbolAnimado, tablaCodigos, lectorTexto, lectorHfmn, paginador (Andrés)
 │   │                             VisuAlgoritmos: barras, reproductor, pagina-visualizador
-│   └── interfaz/                 resumen.js, descompresion.js (Diego)
+│   └── interfaz/                 resumen.js, descompresion.js, inspector.js, formatos.js (Diego)
 ├── demos/                        Una página de prueba por módulo
 └── tests/                        Pruebas de Huffman y de VisuAlgoritmos
 ```

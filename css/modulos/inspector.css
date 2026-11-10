@@ -1,0 +1,145 @@
+/* Inspector del .hfmn. Los colores salen de css/estilos.css. */
+
+.inspector-encabezado {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .5rem;
+  margin-bottom: .85rem;
+}
+
+.inspector-archivo {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--texto);
+  overflow-wrap: anywhere;
+}
+
+.inspector-etiqueta {
+  font-family: var(--bs-font-monospace);
+  font-size: .72rem;
+  padding: .1rem .5rem;
+  color: var(--acento-primario);
+  background: var(--fondo);
+  border: 1px solid var(--borde);
+  border-radius: 999px;
+}
+
+.inspector-datos {
+  display: grid;
+  /* 240 px de mínimo: en escritorio quedan 3 columnas × 2 filas, en celular una */
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: .75rem;
+}
+
+.inspector-dato {
+  display: flex;
+  flex-direction: column;
+  gap: .15rem;
+  background: var(--superficie-2);
+  border: 1px solid var(--borde);
+  border-radius: 14px;
+  padding: .6rem .8rem;
+}
+
+.inspector-nombre {
+  font-size: .7rem;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--texto-suave);
+}
+
+.inspector-valor {
+  font-family: var(--bs-font-monospace);
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--texto);
+}
+
+.inspector-detalle {
+  font-size: .76rem;
+  color: var(--texto-suave);
+}
+
+.inspector-dato--ahorro { border-color: var(--terciario); }
+.inspector-dato--ahorro .inspector-valor { color: var(--texto-ordenado); }
+.inspector-dato--aviso { border-color: var(--barra-comparando); }
+.inspector-dato--aviso .inspector-valor { color: var(--texto-comparacion); }
+
+/* Desplegable con los metadatos y la muestra binaria */
+.inspector-detalles { margin: 1rem 0; }
+
+.inspector-resumen-detalles {
+  cursor: pointer;
+  font-size: .85rem;
+  color: var(--acento-primario);
+}
+
+.inspector-detalles[open] .inspector-resumen-detalles { margin-bottom: .25rem; }
+
+/* Metadatos del JSON: nombre a la izquierda y valor a la derecha */
+.inspector-metadatos {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: .25rem 1rem;
+  margin: 1rem 0;
+  font-size: .85rem;
+}
+
+.inspector-metadatos dt {
+  font-weight: 500;
+  color: var(--texto-suave);
+}
+
+.inspector-metadatos dd {
+  margin: 0;
+  font-family: var(--bs-font-monospace);
+  overflow-wrap: anywhere;
+}
+
+.inspector-muestra {
+  display: flex;
+  flex-direction: column;
+  gap: .3rem;
+  padding: .75rem;
+  margin-bottom: 1rem;
+  background: var(--fondo);
+  border: 1px solid var(--borde);
+  border-radius: 14px;
+  overflow-x: auto;
+}
+
+/* white-space: pre conserva los espacios que alinean cada byte con su binario */
+.inspector-bits,
+.inspector-hex {
+  font-size: .82rem;
+  white-space: pre;
+}
+
+.inspector-bits { color: var(--acento-primario); }
+.inspector-hex { color: var(--texto-suave); }
+
+.inspector-acciones {
+  margin-top: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: .75rem;
+}
+
+.inspector-boton { border-radius: 20px; }
+
+.inspector-estado {
+  margin-top: .75rem;
+  padding: .6rem .8rem;
+  font-size: .85rem;
+  color: var(--texto-suave);
+  border: 1px solid transparent;
+  border-radius: 12px;
+}
+
+.inspector-estado p { margin: 0; overflow-wrap: anywhere; }
+.inspector-estado p + p { margin-top: .2rem; }
+
+.inspector-estado--ok    { color: var(--texto-ordenado);    border-color: var(--terciario);         background: var(--fondo); }
+.inspector-estado--aviso { color: var(--texto-comparacion); border-color: var(--barra-comparando);  background: var(--fondo); }
+.inspector-estado--error { color: var(--texto-escritura);   border-color: var(--barra-escribiendo); background: var(--fondo); }

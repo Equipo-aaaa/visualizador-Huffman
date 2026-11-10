@@ -18,12 +18,12 @@ El visualizador **no importa** nada de `huffman/`. Recibe el objeto `ResultadoHu
 
 ## El objeto central: `ResultadoHuffman`
 
-`comprimir` y `descomprimir` devuelven **la misma forma**. Así la página trata igual un libro recién comprimido y un `.hfmn` cargado desde archivo.
+`comprimir`, `descomprimir` e `inspeccionar` devuelven **la misma forma**. Así la página trata igual un libro recién comprimido y un `.hfmn` cargado desde archivo. `inspeccionar` la devuelve con `texto: null`, porque no decodifica.
 
 ```js
 {
-  texto,          // string: el texto original (o el recuperado)
-  metadatos,      // { titulo?, autor?, idGutenberg?, origen?, nombreArchivo? }
+  texto,          // string: el texto original (o el recuperado); null en inspeccionar
+  metadatos,      // { titulo?, autor?, idGutenberg?, origen?, nombreArchivo?, sha256? }
   frecuencias,    // [{ codePoint, simbolo, frecuencia }] ordenado por codePoint
   pasos,          // ver contrato-pasos-arbol.md
   codigos,        // [{ simbolo, codePoint, frecuencia, codigo: '0101' }] ordenado por codePoint
@@ -31,7 +31,10 @@ El visualizador **no importa** nada de `huffman/`. Recibe el objeto `ResultadoHu
   bitsRelleno,    // 0 a 7
   totalBits,      // bits útiles de la zona de datos (sin relleno)
   zonas,          // [{ nombre, inicio, fin }] ver formato-hfmn.md
-  tamanos: { original, datos, hfmn, razon, ahorro }   // en bytes; razon y ahorro como fracción
+  version,        // versión del formato .hfmn (1)
+  totalCaracteres,// caracteres del texto original
+  tamanos: { original, datos, hfmn, razon, ahorro },  // en bytes; razon y ahorro como fracción
+  integridad      // solo al descomprimir en el worker, ver "Mensajes del Web Worker"
 }
 ```
 
@@ -54,6 +57,7 @@ JavaScript puro: **sin DOM** (`document`, `window`), para que corra en el Web Wo
 | `formatoHfmn.js` | `leerHfmn(bytes)` | `Uint8Array` | `{ version, metadatos, frecuencias, totalCaracteres, bitsRelleno, datos, zonas }` |
 | `comprimirHuffman.js` | `comprimir(texto, metadatos = {})` | string + objeto | `ResultadoHuffman` |
 | `comprimirHuffman.js` | `descomprimir(bytesHfmn)` | `Uint8Array` | `ResultadoHuffman` |
+| `comprimirHuffman.js` | `inspeccionar(bytesHfmn)` | `Uint8Array` | `ResultadoHuffman` con `texto: null`: lee la estructura y reconstruye árbol y códigos sin decodificar. `tamanos.original` se calcula con la tabla (frecuencia × bytes UTF-8 de cada carácter) |
 
 Detalles:
 
@@ -120,7 +124,7 @@ Errores de ambas: JSON `{ error: 'mensaje en español' }` con código:
 - `montarArbol` **arranca la animación sola** al montarse y devuelve `{ reproducir(), detener(), destruir() }`. Debe aguantar más de 100 hojas (zoom y desplazamiento).
 - `montarLectorHfmn` tiene dos pestañas:
   - **Hexadecimal:** usa `resultado.bytesHfmn` y `resultado.zonas` para colorear cada zona.
-  - **Bits:** usa `resultado.texto` y `resultado.codigos` para alinear cada código con su carácter.
+  - **Bits:** usa `resultado.texto` y `resultado.codigos` para alinear cada código con su carácter. Si `texto` es `null` (inspector antes de descomprimir), muestra un aviso.
 - Los lectores muestran el contenido por páginas, porque un libro puede tener millones de caracteres.
 - Los demás devuelven `{ destruir() }`.
 
@@ -130,13 +134,16 @@ Errores de ambas: JSON `{ error: 'mensaje en español' }` con código:
 | --- | --- |
 | `huffman.html` | Página de Huffman con el diseño de VisuAlgoritmos, tres pestañas y un contenedor por módulo (tabla abajo) |
 | `js/pagina-principal.js` | Orquesta todo: recibe el texto del buscador, comprime en el worker y monta cada vista |
-| `js/trabajador.js` | Web Worker que llama `comprimir` / `descomprimir` (mensajes abajo) |
-| `js/interfaz/resumen.js` | `montarResumen(contenedor, resultado)`: tamaños y botón de descarga del `.hfmn` |
-| `js/interfaz/descompresion.js` | `montarDescompresion(contenedor, { alCargarHfmn })`: botón para cargar un `.hfmn` y descargar el texto recuperado como `.txt` |
+| `js/trabajador.js` | Web Worker que llama `comprimir`, `inspeccionar` y `descomprimir`, y calcula la huella SHA-256 (mensajes abajo) |
+| `js/interfaz/resumen.js` | `montarResumen(contenedor, resultado, { alInspeccionar }?)`: tamaños, ahorro, razón, símbolos distintos, descarga del `.hfmn` y botón opcional para ir al inspector |
+| `js/interfaz/descompresion.js` | `montarDescompresion(contenedor, { alCargarHfmn })`: botón y zona para cargar un `.hfmn` |
+| `js/interfaz/inspector.js` | `montarInspector(contenedor, archivo, { alDescomprimir })`: estructura del `.hfmn`, botón **Descomprimir**, resultado de integridad y **Descargar .txt** |
+| `js/interfaz/formatos.js` | Funciones compartidas por resumen e inspector: tamaños en bytes/KB/MB, porcentajes y nombres de archivo |
 
-- `montarDescompresion` revisa que el archivo termine en `.hfmn` y no esté vacío, y llama `alCargarHfmn(bytes, nombreArchivo)` con los bytes como `Uint8Array`. No descomprime: eso lo hace la página con el worker.
-- Devuelve `{ mostrarEstado(mensaje, esError = false), mostrarDescarga(texto, titulo), destruir() }`. La página usa `mostrarEstado` para avisar junto al botón si el archivo se recuperó o por qué no es válido.
-- `mostrarDescarga` guarda el texto recuperado y muestra el botón **Descargar .txt**. El archivo se guarda en UTF-8 y se nombra con `titulo`, sin los caracteres que Windows no acepta. El botón se oculta al cargar otro archivo.
+- `montarDescompresion` revisa que el archivo termine en `.hfmn` y no esté vacío, y llama `alCargarHfmn(bytes, nombreArchivo)` con los bytes como `Uint8Array`. No descomprime: la página lo manda a inspeccionar.
+- Devuelve `{ mostrarEstado(mensaje, esError = false), destruir() }`. La página usa `mostrarEstado` para avisar junto al botón si el archivo se abrió o por qué no es válido.
+- `montarInspector` recibe `archivo = { nombre, datos }`, donde `datos` es el resultado de `inspeccionar`. Muestra nombre y extensión, versión, tamaños, ahorro, razón, símbolos, bits codificados, metadatos y los primeros bytes de datos en binario y hexadecimal. Al presionar **Descomprimir** llama `alDescomprimir()`.
+- Devuelve `{ mostrarDescompresion(resultado), mostrarError(mensaje), destruir() }`. `mostrarDescompresion` recibe el resultado de `descomprimir` con su `integridad`, muestra si se verificó y habilita **Descargar .txt** (UTF-8, nombrado con el título).
 
 ### Contenedores de `huffman.html`
 
@@ -146,23 +153,31 @@ Errores de ambas: JSON `{ error: 'mensaje en español' }` con código:
 | 2. Compresión | `#resumen` | `montarResumen` |
 | 2. Compresión | `#arbol`, dentro de `<details id="desplegable-arbol">` | `montarArbol`, al abrir el desplegable |
 | 2. Compresión | `#tabla-codigos` | `montarTablaCodigos` |
-| 3. Lector y descompresión | `#cargar-hfmn` | `montarDescompresion` |
-| 3. Lector y descompresión | `#lector-texto` | `montarLectorTexto` |
-| 3. Lector y descompresión | `#lector-hfmn` | `montarLectorHfmn` |
+| 3. Inspector y descompresión | `#cargar-hfmn` | `montarDescompresion` |
+| 3. Inspector y descompresión | `#inspector` | `montarInspector` |
+| 3. Inspector y descompresión | `#lector-hfmn` | `montarLectorHfmn` |
+| 3. Inspector y descompresión | `#inspector-tabla` | `montarTablaCodigos` |
+| 3. Inspector y descompresión | `#inspector-arbol`, dentro de `<details id="desplegable-inspector-arbol">` | `montarArbol`, al abrir el desplegable |
+| 3. Inspector y descompresión | `#lector-texto` | `montarLectorTexto`, después de descomprimir |
 
-Al cargar un `.hfmn` en la sección 3, el resultado de `descomprimir` reemplaza lo que muestran los lectores, y el texto recuperado aparece en `#lector-texto`.
+La sección 3 siempre muestra un `.hfmn`: el que se acaba de comprimir o el que se cargó. Primero se **inspecciona** (estructura, tabla y árbol reconstruido, sin el texto) y la descompresión es un paso explícito: al presionar **Descomprimir**, el texto aparece en `#lector-texto` y la pestaña Bits ya puede alinear cada código con su carácter.
 
 ### Mensajes del Web Worker
 
 ```js
 // página → worker
 { tipo: 'comprimir', texto, metadatos }
-{ tipo: 'descomprimir', bytesHfmn }      // Uint8Array, se transfiere
+{ tipo: 'inspeccionar', bytesHfmn }                     // Uint8Array, se transfiere
+{ tipo: 'descomprimir', bytesHfmn, textoOriginal? }     // copia de los bytes, se transfiere
 
 // worker → página
 { tipo: 'resultado', resultado }         // ResultadoHuffman
 { tipo: 'error', mensaje }
 ```
+
+- **Comprimir:** antes de llamar `comprimir`, el worker calcula el SHA-256 del texto en UTF-8 y lo agrega a los metadatos como `sha256` (64 caracteres hexadecimales).
+- **Descomprimir:** agrega al resultado `integridad = { esperado, obtenido, coincideHash, identicoAlOriginal }`. `esperado` es el `sha256` guardado en el archivo y `obtenido` el del texto recuperado. `coincideHash` es `null` si el archivo no tiene huella. `identicoAlOriginal` compara byte por byte con `textoOriginal` cuando la página lo manda (archivo recién comprimido), y si no es `null`.
+- Los mensajes se atienden **uno a la vez y en orden**, aunque el cálculo de la huella sea asíncrono. Por eso la página sabe a qué operación pertenece cada respuesta con una cola de pendientes.
 
 El worker se crea con `new Worker(new URL('./trabajador.js', import.meta.url), { type: 'module' })`, para que la ruta funcione igual en local y en Netlify.
 

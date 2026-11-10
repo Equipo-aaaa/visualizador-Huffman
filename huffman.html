@@ -17,6 +17,7 @@
   <link href="css/modulos/descompresion.css" rel="stylesheet">
   <link href="css/modulos/lectorTexto.css" rel="stylesheet">
   <link href="css/modulos/lectorHfmn.css" rel="stylesheet">
+  <link href="css/modulos/inspector.css" rel="stylesheet">
 </head>
 <body>
 
@@ -79,6 +80,7 @@
                 <li>Une los dos nodos con menor frecuencia hasta formar el árbol.</li>
                 <li>Lee el código de cada carácter en el árbol.</li>
                 <li>Reemplaza el texto por esos códigos y guarda el <span class="mono">.hfmn</span>.</li>
+                <li>Inspecciona el archivo, descomprímelo y verifica que el texto sea idéntico.</li>
               </ol>
             </section>
           </div>
@@ -110,7 +112,7 @@
           <li class="nav-item" role="presentation">
             <button class="nav-link" id="tab-lector" type="button" role="tab"
                     data-bs-toggle="tab" data-bs-target="#seccion-lector" aria-controls="seccion-lector" aria-selected="false">
-              <span class="numero">3</span>Lector y descompresión
+              <span class="numero">3</span>Inspector y descompresión
             </button>
           </li>
         </ul>
@@ -143,26 +145,38 @@
             </div>
           </section>
 
-          <!-- Sección 3: Lector y descompresión -->
+          <!-- Sección 3: Inspector y descompresión -->
           <section class="tab-pane fade" id="seccion-lector" role="tabpanel" aria-labelledby="tab-lector" tabindex="0">
             <div class="panel mb-3">
               <h2 class="titulo-panel">Cargar un archivo .hfmn</h2>
               <div id="cargar-hfmn" class="huffman-contenedor" data-vacio="Aquí va el botón para cargar un .hfmn"></div>
             </div>
 
-            <div class="row g-3">
-              <div class="col-xl-6">
-                <div class="panel h-100">
-                  <h2 class="titulo-panel">Texto</h2>
-                  <div id="lector-texto" class="huffman-contenedor" data-vacio="Aquí va el lector del texto"></div>
-                </div>
-              </div>
-              <div class="col-xl-6">
-                <div class="panel h-100">
-                  <h2 class="titulo-panel">Archivo .hfmn</h2>
-                  <div id="lector-hfmn" class="huffman-contenedor" data-vacio="Aquí va el lector del .hfmn"></div>
-                </div>
-              </div>
+            <!-- El inspector muestra la estructura del archivo antes de descomprimirlo -->
+            <div class="panel mb-3">
+              <h2 class="titulo-panel">Inspector</h2>
+              <div id="inspector" class="huffman-contenedor" data-vacio="Comprime un texto o carga un .hfmn para inspeccionarlo"></div>
+            </div>
+
+            <!-- Desplegables cerrados: el inspector muestra a la vista solo los números principales -->
+            <details class="panel huffman-desplegable mb-3">
+              <summary class="titulo-panel">Archivo .hfmn por zonas (hexadecimal y bits)</summary>
+              <div id="lector-hfmn" class="huffman-contenedor" data-vacio="Aquí aparecen los bytes del archivo por zonas"></div>
+            </details>
+
+            <details class="panel huffman-desplegable mb-3">
+              <summary class="titulo-panel">Frecuencias y códigos guardados</summary>
+              <div id="inspector-tabla" class="huffman-contenedor" data-vacio="Aquí va la tabla que trae el archivo"></div>
+            </details>
+
+            <details id="desplegable-inspector-arbol" class="panel huffman-desplegable mb-3">
+              <summary class="titulo-panel">Árbol reconstruido con la tabla</summary>
+              <div id="inspector-arbol" class="huffman-contenedor" data-vacio="Aquí se reconstruye el árbol del archivo"></div>
+            </details>
+
+            <div class="panel">
+              <h2 class="titulo-panel">Texto recuperado</h2>
+              <div id="lector-texto" class="huffman-contenedor" data-vacio="Presiona Descomprimir en el inspector para recuperar el texto"></div>
             </div>
           </section>
         </div>

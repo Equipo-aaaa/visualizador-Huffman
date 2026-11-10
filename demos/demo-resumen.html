@@ -41,6 +41,9 @@
     const tamHfmn = 1_213_400;
     montarResumen(document.getElementById('resumen-libro'), {
       metadatos: { titulo: 'Don Quijote: "edición" de prueba', origen: 'gutenberg' },
+      // 111 símbolos distintos, como el Quijote real
+      frecuencias: Array.from({ length: 111 }, () => ({ frecuencia: 0 })),
+      totalCaracteres: 2_168_090,
       bytesHfmn: new Uint8Array(tamHfmn),
       tamanos: {
         original,

@@ -113,6 +113,12 @@ function crearPanelBits(resultado) {
   panel.append(elemento('p', 'lectorHfmn-resumen',
     `${totalBits.toLocaleString('es-MX')} bits útiles + ${bitsRelleno} de relleno = ${(bitsDatos / 8).toLocaleString('es-MX')} bytes de datos`));
 
+  // En el inspector, antes de descomprimir, todavía no hay texto con qué alinear los bits
+  if (texto === null || texto === undefined) {
+    panel.append(elemento('p', 'lectorHfmn-vacio', 'Presiona Descomprimir para ver el código de cada carácter debajo de él.'));
+    return panel;
+  }
+
   const visor = elemento('div', 'lectorHfmn-bits');
   const totalPaginas = Math.ceil(totalCaracteres / CARACTERES_POR_PAGINA_BITS);
 

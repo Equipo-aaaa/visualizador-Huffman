@@ -11,7 +11,7 @@ Una página web que comprime libros de Project Gutenberg con el algoritmo de Huf
    - cuánto pesaba y cuánto pesa comprimido, con un botón para descargar el archivo comprimido;
    - el árbol de Huffman, que se construye animado al abrir un desplegable;
    - la tabla con el código binario de cada carácter.
-3. **Lector y descompresión.** Se puede leer el texto original, ver el archivo comprimido byte por byte y cargar cualquier archivo comprimido para recuperar su texto.
+3. **Inspector y descompresión.** Se carga cualquier archivo comprimido (o el que se acaba de crear) y primero se inspecciona su estructura: tamaños, tabla, árbol reconstruido y bytes. Después, con el botón Descomprimir, se recupera el texto y se comprueba con su huella SHA-256 que sea idéntico al original.
 
 El archivo comprimido tiene una extensión propia, `.hfmn`. Lleva dentro todo lo necesario para descomprimirse, así que se puede descargar hoy y abrir otro día.
 

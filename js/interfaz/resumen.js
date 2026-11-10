@@ -2,40 +2,9 @@
 // Diego Antonio Espinosa Salinas
 // Solo muestra lo que ya viene en el resultado: comprimir() calcula los tamaños
 // en resultado.tamanos y arma el archivo en resultado.bytesHfmn.
-
-// Crea un elemento con su clase y su texto. textContent y no innerHTML, para
-// que un título con "<" o ">" se muestre como texto y no como HTML.
-function crear(etiqueta, clase, texto) {
-  const elemento = document.createElement(etiqueta);
-  if (clase) elemento.className = clase;
-  if (texto !== undefined) elemento.textContent = texto;
-  return elemento;
-}
-
-// 2,225,777 bytes se lee mejor como "2.12 MB". Se usa 1024 porque así lo
-// cuentan Windows y el explorador de archivos.
-function formatearBytes(bytes) {
-  if (bytes < 1024) {
-    return `${bytes.toLocaleString('es-MX')} B`;
-  }
-  if (bytes < 1024 * 1024) {
-    return `${(bytes / 1024).toLocaleString('es-MX', { maximumFractionDigits: 1 })} KB`;
-  }
-  return `${(bytes / (1024 * 1024)).toLocaleString('es-MX', { maximumFractionDigits: 2 })} MB`;
-}
-
-// 0.4552 → "45.5 %"
-function formatearPorcentaje(fraccion) {
-  return `${(fraccion * 100).toLocaleString('es-MX', { maximumFractionDigits: 1 })} %`;
-}
-
-// Quita del título los caracteres que Windows no acepta en un nombre de
-// archivo (\ / : * ? " < > |) y lo recorta para que no quede enorme.
-function nombreDescarga(metadatos) {
-  const base = metadatos.titulo || metadatos.nombreArchivo?.replace(/\.txt$/i, '') || 'texto';
-  const limpio = base.replace(/[\\/:*?"<>|]/g, '').trim().slice(0, 80);
-  return `${limpio || 'texto'}.hfmn`;
-}
+import {
+  crear, formatearNumero, formatearBytes, formatearPorcentaje, describirAhorro, nombreHfmn,
+} from './formatos.js';
 
 // Una tarjeta con su nombre arriba y el valor grande abajo
 function crearTarjeta(nombre, valor, detalle, claseExtra = '') {
@@ -50,53 +19,53 @@ function crearTarjeta(nombre, valor, detalle, claseExtra = '') {
   return tarjeta;
 }
 
-export function montarResumen(contenedor, resultado) {
+// alInspeccionar es opcional: si se pasa, aparece el botón que lleva al inspector
+export function montarResumen(contenedor, resultado, { alInspeccionar } = {}) {
   contenedor.replaceChildren();
 
-  const { original, hfmn, ahorro } = resultado.tamanos;
-  const nombreArchivo = nombreDescarga(resultado.metadatos);
+  const { original, hfmn, razon } = resultado.tamanos;
+  const nombreArchivo = nombreHfmn(resultado.metadatos);
+  const ahorro = describirAhorro(resultado.tamanos);
+  // Si el resultado no trae el total (como el JSON de ejemplo), sale de sumar las frecuencias
+  const totalCaracteres = resultado.totalCaracteres
+    ?? resultado.frecuencias.reduce((suma, f) => suma + f.frecuencia, 0);
+  const claseAhorro = ahorro.tipo === 'ahorro' ? 'resumen-tarjeta--ahorro' : 'resumen-tarjeta--aviso';
 
-  // ---- Tarjetas de tamaños ----
+  // ---- Tarjetas ----
   const tarjetas = crear('div', 'resumen-tarjetas');
-
-  // En un texto muy corto el .hfmn sale más grande que el original, porque
-  // además de los datos guarda la cabecera y la tabla de frecuencias. No es un
-  // error: se muestra para explicar que Huffman conviene con textos largos.
-  // Se compara hfmn con original y no el signo de ahorro, porque con un texto
-  // vacío no se puede dividir entre 0 y ahorro no indica que el archivo creció.
-  let tarjetaFinal;
-  if (original === 0) {
-    tarjetaFinal = crearTarjeta('Texto vacío', '—',
-      'El .hfmn solo guarda la cabecera', 'resumen-tarjeta--aviso');
-  } else if (hfmn > original) {
-    tarjetaFinal = crearTarjeta('Crecimiento', formatearPorcentaje(hfmn / original - 1),
-      'El texto es muy corto para comprimirlo', 'resumen-tarjeta--aviso');
-  } else {
-    tarjetaFinal = crearTarjeta('Ahorro', formatearPorcentaje(ahorro),
-      `${formatearBytes(original - hfmn)} menos`, 'resumen-tarjeta--ahorro');
-  }
-
   tarjetas.append(
     crearTarjeta('Original', formatearBytes(original),
-      `${original.toLocaleString('es-MX')} bytes en UTF-8`),
+      `${formatearNumero(original)} bytes en UTF-8`),
     crearTarjeta('Archivo .hfmn', formatearBytes(hfmn),
-      `${hfmn.toLocaleString('es-MX')} bytes`),
-    tarjetaFinal,
+      `${formatearNumero(hfmn)} bytes`),
+    crearTarjeta(ahorro.titulo, ahorro.valor, ahorro.detalle, claseAhorro),
+    crearTarjeta('Símbolos distintos', formatearNumero(resultado.frecuencias.length),
+      `en ${formatearNumero(totalCaracteres)} caracteres`),
   );
 
   // ---- Barra de proporción ----
   // El ancho de la barra es el tamaño del .hfmn comparado con el original
-  // (máximo 100 %, por si el archivo salió más grande).
+  // (máximo 100 %, por si el archivo salió más grande o el texto está vacío).
+  const proporcion = original === 0 ? 1 : hfmn / original;
   const barra = crear('div', 'resumen-barra');
   const relleno = crear('div', 'resumen-barra-relleno');
-  // Con un texto vacío la barra se llena, igual que cuando el archivo crece
-  const proporcion = original === 0 ? 1 : hfmn / original;
   relleno.style.width = `${Math.min(proporcion, 1) * 100}%`;
   barra.append(relleno);
   barra.setAttribute('role', 'img');
   barra.setAttribute('aria-label', original === 0
     ? 'El texto original está vacío'
     : `El .hfmn ocupa ${formatearPorcentaje(proporcion)} del tamaño original`);
+
+  // La razón es hfmn / original: menos de 1 significa que el archivo se redujo
+  const textoRazon = original === 0
+    ? 'Razón de compresión: no aplica con un texto vacío'
+    : `Razón de compresión: ${razon.toLocaleString('es-MX', { minimumFractionDigits: 4 })} · el .hfmn ocupa ${formatearPorcentaje(proporcion)} del original`;
+  const notas = crear('div', 'resumen-notas');
+  notas.append(crear('p', 'resumen-nota', textoRazon));
+  if (resultado.metadatos.sha256) {
+    notas.append(crear('p', 'resumen-nota',
+      'Se guardó la huella SHA-256 del texto en el archivo, para comprobar su integridad al descomprimirlo.'));
+  }
 
   // ---- Descarga ----
   // Un Blob es un archivo que vive en la memoria del navegador, y createObjectURL
@@ -112,9 +81,20 @@ export function montarResumen(contenedor, resultado) {
   const icono = crear('i', 'bi bi-download me-2');
   icono.setAttribute('aria-hidden', 'true');
   enlace.append(icono, 'Descargar .hfmn');
-  descarga.append(enlace, crear('span', 'resumen-archivo mono', nombreArchivo));
+  descarga.append(enlace);
 
-  contenedor.append(tarjetas, barra, descarga);
+  if (alInspeccionar) {
+    const inspeccionar = crear('button', 'btn btn-outline-info resumen-boton');
+    inspeccionar.type = 'button';
+    const iconoLupa = crear('i', 'bi bi-search me-2');
+    iconoLupa.setAttribute('aria-hidden', 'true');
+    inspeccionar.append(iconoLupa, 'Inspeccionar el .hfmn');
+    inspeccionar.addEventListener('click', alInspeccionar);
+    descarga.append(inspeccionar);
+  }
+  descarga.append(crear('span', 'resumen-archivo mono', nombreArchivo));
+
+  contenedor.append(tarjetas, barra, notas, descarga);
 
   return {
     destruir() {

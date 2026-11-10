@@ -41,6 +41,15 @@
 .resumen-tarjeta--aviso { border-color: var(--barra-comparando); }
 .resumen-tarjeta--aviso .resumen-valor { color: var(--texto-comparacion); }
 
+/* Razón de compresión y aviso del hash, debajo de la barra */
+.resumen-notas { margin: -.25rem 0 1rem; }
+
+.resumen-nota {
+  margin: 0 0 .2rem;
+  font-size: .8rem;
+  color: var(--texto-suave);
+}
+
 /* Barra: el fondo es el original y el relleno es lo que ocupa el .hfmn */
 .resumen-barra {
   height: 10px;

@@ -39,6 +39,9 @@ Objeto JSON compacto (`JSON.stringify(objeto)`, sin espacios). Todos los campos 
 | `idGutenberg` | `2000` | Saber de qué libro vino |
 | `origen` | `"gutenberg"` o `"local"` | Si se eligió en el buscador o se subió un `.txt` |
 | `nombreArchivo` | `"abracadabra.txt"` | Nombre original del `.txt` subido |
+| `sha256` | `"3f6bb9d6…af9d75"` (64 caracteres) | Huella SHA-256 del texto original en UTF-8. Al descomprimir se calcula la del texto recuperado y se comparan para comprobar la integridad, sin necesitar el `.txt` original |
+
+El worker agrega `sha256` al comprimir. Ocupa 76 bytes del JSON (`,"sha256":"…"`), así que cada `.hfmn` creado en la página pesa 76 bytes más que uno sin huella, como `ejemplos/abracadabra.hfmn`. Un archivo sin `sha256` se puede descomprimir igual, pero su integridad no se puede verificar.
 
 ## Zonas (para el lector hexadecimal)
 
@@ -69,6 +72,8 @@ Si alguna falla, `leerHfmn` lanza un `Error` con un mensaje en español y no dev
 | Ahorro | `1 − razon`, en porcentaje |
 
 El resumen muestra **Original** y **Archivo `.hfmn`**. Es la comparación honesta, porque la tabla también ocupa espacio.
+
+El inspector calcula **Original** sin descomprimir: el archivo guarda cuántas veces aparece cada carácter, y cada carácter ocupa una cantidad fija de bytes en UTF-8 (1 si su `codePoint` es menor que 0x80, 2 si es menor que 0x800, 3 si es menor que 0x10000 y 4 en otro caso). La suma de frecuencia × bytes da el tamaño exacto.
 
 ## Ejemplo completo: `abracadabra`
 

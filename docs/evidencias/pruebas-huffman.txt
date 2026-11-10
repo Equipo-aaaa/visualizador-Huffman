@@ -1,0 +1,177 @@
+=== Piezas sueltas ===
+
+[contarFrecuencias]
+  ✔ un emoji cuenta como un carácter
+  ✔ la ñ cuenta como un carácter
+  ✔ salen ordenadas por codePoint
+
+[ColaPrioridad]
+  ✔ con frecuencias iguales sale primero el menor id
+  ✔ extraer en una cola vacía devuelve undefined
+
+=== abracadabra contra el contrato ===
+
+[abracadabra]
+  ✔ descomprimir(comprimir(t)) devuelve el mismo texto
+  ✔ k hojas y k-1 fusiones
+  ✔ las frecuencias suman el total de caracteres
+  ✔ ningún código es prefijo de otro
+  ✔ totalBits coincide con frecuencia × largo del código
+  ✔ bytes de datos y relleno cuadran con los bits
+  ✔ las zonas cubren el .hfmn sin huecos
+  ✔ tamanos.hfmn es el largo real del archivo
+  ✔ descomprimir reconstruye los mismos pasos, códigos y frecuencias
+  ✔ comprimir es determinista (mismos bytes)
+  ✔ los pasos son idénticos al ejemplo
+  ✔ los códigos son idénticos al ejemplo
+  ✔ los datos son 6E 8A DC, con 23 bits útiles y 1 de relleno
+  ✔ el .hfmn generado es idéntico byte a byte al del ejemplo
+  ✔ comprimir.texto igual al ejemplo
+  ✔ comprimir.metadatos igual al ejemplo
+  ✔ comprimir.frecuencias igual al ejemplo
+  ✔ comprimir.pasos igual al ejemplo
+  ✔ comprimir.codigos igual al ejemplo
+  ✔ comprimir.bitsRelleno igual al ejemplo
+  ✔ comprimir.totalBits igual al ejemplo
+  ✔ comprimir.zonas igual al ejemplo
+  ✔ comprimir.tamanos igual al ejemplo
+  ✔ descomprimir(.hfmn del ejemplo) recupera abracadabra
+  ✔ las zonas leídas son las del ejemplo
+
+=== Casos borde ===
+
+[texto vacío]
+  ✔ descomprimir(comprimir(t)) devuelve el mismo texto
+  ✔ k hojas y k-1 fusiones
+  ✔ las frecuencias suman el total de caracteres
+  ✔ ningún código es prefijo de otro
+  ✔ totalBits coincide con frecuencia × largo del código
+  ✔ bytes de datos y relleno cuadran con los bits
+  ✔ las zonas cubren el .hfmn sin huecos
+  ✔ tamanos.hfmn es el largo real del archivo
+  ✔ descomprimir reconstruye los mismos pasos, códigos y frecuencias
+  ✔ comprimir es determinista (mismos bytes)
+  ✔ no hay pasos ni códigos
+  ✔ no hay bits ni bytes de datos
+  ✔ el .hfmn mide 18 bytes (solo cabecera)
+
+[un solo símbolo]
+  ✔ descomprimir(comprimir(t)) devuelve el mismo texto
+  ✔ k hojas y k-1 fusiones
+  ✔ las frecuencias suman el total de caracteres
+  ✔ ningún código es prefijo de otro
+  ✔ totalBits coincide con frecuencia × largo del código
+  ✔ bytes de datos y relleno cuadran con los bits
+  ✔ las zonas cubren el .hfmn sin huecos
+  ✔ tamanos.hfmn es el largo real del archivo
+  ✔ descomprimir reconstruye los mismos pasos, códigos y frecuencias
+  ✔ comprimir es determinista (mismos bytes)
+  ✔ una hoja, cero fusiones y código "0"
+
+[todos los caracteres iguales]
+  ✔ descomprimir(comprimir(t)) devuelve el mismo texto
+  ✔ k hojas y k-1 fusiones
+  ✔ las frecuencias suman el total de caracteres
+  ✔ ningún código es prefijo de otro
+  ✔ totalBits coincide con frecuencia × largo del código
+  ✔ bytes de datos y relleno cuadran con los bits
+  ✔ las zonas cubren el .hfmn sin huecos
+  ✔ tamanos.hfmn es el largo real del archivo
+  ✔ descomprimir reconstruye los mismos pasos, códigos y frecuencias
+  ✔ comprimir es determinista (mismos bytes)
+  ✔ código "0", datos 00 y 4 bits de relleno
+  ✔ el .hfmn mide 27 bytes
+
+[acentos]
+  ✔ descomprimir(comprimir(t)) devuelve el mismo texto
+  ✔ k hojas y k-1 fusiones
+  ✔ las frecuencias suman el total de caracteres
+  ✔ ningún código es prefijo de otro
+  ✔ totalBits coincide con frecuencia × largo del código
+  ✔ bytes de datos y relleno cuadran con los bits
+  ✔ las zonas cubren el .hfmn sin huecos
+  ✔ tamanos.hfmn es el largo real del archivo
+  ✔ descomprimir reconstruye los mismos pasos, códigos y frecuencias
+  ✔ comprimir es determinista (mismos bytes)
+
+[ñ]
+  ✔ descomprimir(comprimir(t)) devuelve el mismo texto
+  ✔ k hojas y k-1 fusiones
+  ✔ las frecuencias suman el total de caracteres
+  ✔ ningún código es prefijo de otro
+  ✔ totalBits coincide con frecuencia × largo del código
+  ✔ bytes de datos y relleno cuadran con los bits
+  ✔ las zonas cubren el .hfmn sin huecos
+  ✔ tamanos.hfmn es el largo real del archivo
+  ✔ descomprimir reconstruye los mismos pasos, códigos y frecuencias
+  ✔ comprimir es determinista (mismos bytes)
+  ✔ la ñ tiene su propio código
+
+[emoji]
+  ✔ descomprimir(comprimir(t)) devuelve el mismo texto
+  ✔ k hojas y k-1 fusiones
+  ✔ las frecuencias suman el total de caracteres
+  ✔ ningún código es prefijo de otro
+  ✔ totalBits coincide con frecuencia × largo del código
+  ✔ bytes de datos y relleno cuadran con los bits
+  ✔ las zonas cubren el .hfmn sin huecos
+  ✔ tamanos.hfmn es el largo real del archivo
+  ✔ descomprimir reconstruye los mismos pasos, códigos y frecuencias
+  ✔ comprimir es determinista (mismos bytes)
+  ✔ cada emoji es un solo símbolo
+
+[saltos de línea \r\n]
+  ✔ descomprimir(comprimir(t)) devuelve el mismo texto
+  ✔ k hojas y k-1 fusiones
+  ✔ las frecuencias suman el total de caracteres
+  ✔ ningún código es prefijo de otro
+  ✔ totalBits coincide con frecuencia × largo del código
+  ✔ bytes de datos y relleno cuadran con los bits
+  ✔ las zonas cubren el .hfmn sin huecos
+  ✔ tamanos.hfmn es el largo real del archivo
+  ✔ descomprimir reconstruye los mismos pasos, códigos y frecuencias
+  ✔ comprimir es determinista (mismos bytes)
+  ✔ \r y \n son dos caracteres distintos (no se normalizan)
+
+[mezcla de saltos]
+  ✔ descomprimir(comprimir(t)) devuelve el mismo texto
+  ✔ k hojas y k-1 fusiones
+  ✔ las frecuencias suman el total de caracteres
+  ✔ ningún código es prefijo de otro
+  ✔ totalBits coincide con frecuencia × largo del código
+  ✔ bytes de datos y relleno cuadran con los bits
+  ✔ las zonas cubren el .hfmn sin huecos
+  ✔ tamanos.hfmn es el largo real del archivo
+  ✔ descomprimir reconstruye los mismos pasos, códigos y frecuencias
+  ✔ comprimir es determinista (mismos bytes)
+
+=== Archivos alterados lanzan Error en español ===
+  ✔ firma cambiada → "El archivo no es un .hfmn"
+  ✔ versión 2 → "Versión de .hfmn no soportada"
+  ✔ relleno 9 → "Los bits de relleno deben estar entre 0 y 7"
+  ✔ metadatos gigantes → "El archivo está incompleto: los metadatos no caben"
+  ✔ JSON roto → "Los metadatos del archivo no son un JSON válido"
+  ✔ frecuencia alterada → "La suma de las frecuencias no coincide con el total de caracteres"
+  ✔ archivo corto → "El archivo es demasiado corto para ser un .hfmn"
+  ✔ archivo truncado → "El archivo está incompleto: la tabla de frecuencias no cabe"
+  ✔ datos incompletos → "Los datos del archivo están incompletos o dañados"
+
+=== Libro real (tests/datos/libro.txt) ===
+  (763082 caracteres, 772386 bytes)
+
+[libro real]
+  ✔ descomprimir(comprimir(t)) devuelve el mismo texto
+  ✔ k hojas y k-1 fusiones
+  ✔ las frecuencias suman el total de caracteres
+  ✔ ningún código es prefijo de otro
+  ✔ totalBits coincide con frecuencia × largo del código
+  ✔ bytes de datos y relleno cuadran con los bits
+  ✔ las zonas cubren el .hfmn sin huecos
+  ✔ tamanos.hfmn es el largo real del archivo
+  ✔ descomprimir reconstruye los mismos pasos, códigos y frecuencias
+  ✔ comprimir es determinista (mismos bytes)
+  ✔ el .hfmn pesa menos que el original (aquí sí se comprime)
+  ✔ el ahorro es positivo
+  Original: 772386 bytes · .hfmn: 437111 bytes · ahorro: 43.4 %
+
+=== 140 pruebas aprobadas, 0 fallidas ===

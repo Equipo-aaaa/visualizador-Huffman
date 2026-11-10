@@ -2,9 +2,13 @@
 VisuAlgoritmos - Compresión de libros con Huffman y Fibonacci con programación dinámica
 
 Sitio publicado: [[URL de Netlify](https://visualizador-huffman.netlify.app/huffman.html)]
+
 Repositorio: [[URL del repositorio](https://github.com/Equipo-aaaa/visualizador-Huffman)]
+
 GitHub Project: [[URL del GitHub Project](https://github.com/Equipo-aaaa/visualizador-Huffman/projects)]
+
 Backlog: [[URL del GitHub Project](https://github.com/orgs/Equipo-aaaa/projects/3)]
+
 
 El sitio también incluye el Visualizador y el Comparador de ordenamientos de la entrega anterior, documentados en el repositorio [VisualizadorOrdenamientos](https://github.com/Equipo-aaaa/VisualizadorOrdenamientos).
 
